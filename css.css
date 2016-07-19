@@ -108,12 +108,13 @@
 }
 
 .bacModal .bacModalDetailsContainer {
-	width: 200%;
+	width: calc(200% + 40px);
 	transition: transform 0.2s linear;
 }
 
 .bacModal .bacModalDetailsContainer .bacModalDetails {
 	float: left;
+	padding-right: 20px;
 	width: 50%;
 }
 

@@ -63,16 +63,15 @@
 
 <body>
 	<div class="finance-pinklinks-wrapper">
-		<button data-action="ask">Ask a question</button>
-		<button data-action="save">Save This Car</button>
-		<button data-action="exchange">Part Exchange</button>
+		<a href="#" data-action="ask">Ask a question</a>
+		<a href="#" data-action="save">Save This Car</a>
+		<a href="#" data-action="exchange">Part Exchange</a>
 	</div>
 	<div id="bacModal" class="bacModal">
 		<div id="signIn" class="overlay" data-action="initialClick"></div>
 		<div class="popup">
 			<div class="header"><h4>A title</h4><a class="popup-close" href="#" data-action="initialClick">×</a></div>
-			<div id="bacModalText" class="bacModalText">
-			</div>
+			<div id="bacModalText" class="bacModalText"></div>
 			<form id="bacModalForm">
 				<label>
 					<textarea name="question" placeholder="Ask your question..."></textarea>
@@ -87,7 +86,7 @@
 							<input type="text" name="lastName" placeholder="Last Name" />
 						</label>
 						<label>
-							<input type="text" name="phone" pattern="[0-9]*" placeholder="Phone Number" />
+							<input type="tel" name="phone" placeholder="Phone Number" />
 						</label>
 						<label>
 							<input type="email" name="email" placeholder="Email" />
@@ -109,7 +108,7 @@
 				</div>
 			</form>
 		</div>
-	<div>
+	</div>
 
 	<script>
 		(function() {
@@ -277,12 +276,16 @@
 					this.$bacModalUserText.innerHTML = this.templates.notSignedIn;
 
 					var $buttonWrapper 		= document.getElementsByClassName('finance-pinklinks-wrapper')[0];
-					this.bacButtons 		= [].slice.call($buttonWrapper.getElementsByTagName('button'));
+					this.bacButtons 		= [].slice.call($buttonWrapper.getElementsByTagName('a'));
 
 					this.bacButtons.forEach(function(button) {
 						button.addEventListener('click', (this.initialClick).bind(this), false);
 					}.bind(this));
 
+					/*
+					// NOT NEEDED
+					// Since there's no AJAX signin or BaC Java, the signin will be completed when the page loads
+					// If an AJAX signin is implented in future, then this can used.
 					var getSignInStatus = function() {
 						if (this.sessionId) {
 							$buttonWrapper.removeEventListener('mouseover', getSignInStatus, false);
@@ -299,7 +302,7 @@
 					}.bind(this);
 
 					$buttonWrapper.addEventListener('mouseover', getSignInStatus, false);
-
+					*/
 				},
 				templates: {
 					delay: 		'<p>Can we help? If you’ve got any questions about this car, or ordering with BuyaCar, then let us know in the box below.</p><p>Fill in your details below to register and we’ll get back to you in office hours</p>',
@@ -319,8 +322,6 @@
 				});
 			}
 
-			// Element.matches polyfill
-			// Element.prototype.matches = Element.prototype.matches || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
 			window.bacModal = bacModal;
 
 		})();
