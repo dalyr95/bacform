@@ -71,8 +71,7 @@
 		<div id="signIn" class="overlay" data-action="initialClick"></div>
 		<div class="popup">
 			<div class="header"><h4>A title</h4><a class="popup-close" href="#" data-action="initialClick">×</a></div>
-			<div>
-				<p id="bacModalText"></p>
+			<div id="bacModalText" class="bacModalText">
 			</div>
 			<form id="bacModalForm">
 				<label>
@@ -82,10 +81,10 @@
 					<div class="bacModalDetails">
 						<p id="bacModalUserText">If you have an account <a href="#" data-action="bacModalSignIn">sign in</a></p>
 						<label>
-							<input type="text" name="firstName" placeholder="Name" />
+							<input type="text" name="firstName" placeholder="First Name" />
 						</label>
 						<label>
-							<input type="text" name="lastName" placeholder="Name" />
+							<input type="text" name="lastName" placeholder="Last Name" />
 						</label>
 						<label>
 							<input type="text" name="phone" pattern="[0-9]*" placeholder="Phone Number" />

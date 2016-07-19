@@ -1,0 +1,177 @@
+.bacModal {
+	display: none;
+}
+
+.bacModal.open {
+	display: block;
+}
+
+.bacModal,
+.bacModal * {
+	box-sizing: border-box;
+}
+
+.bacModal .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,0.7);
+    transition: opacity 0.2s;
+    opacity: 1;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    -webkit-animation-duration: 0.2s;
+    -webkit-animation-name: popupAnimation;
+    animation-duration: 0.2s;
+    animation-name: popupAnimation;
+}
+
+@keyframes popupAnimation {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@-webkit-keyframes popupAnimation {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.bacModal .popup {
+    background: #fff;
+    left: 50%;
+    max-height: 100vh;
+    overflow-y: auto;
+    max-width: 860px;
+    padding: 40px 20px 20px 20px;
+    position: fixed;
+    overflow-x: hidden;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    width: 50%;
+    z-index: 101;
+    -webkit-overflow-scrolling: touch;
+    -webkit-animation-duration: 0.2s;
+    -webkit-animation-name: popupAnimation;
+    animation-duration: 0.2s;
+    animation-name: popupAnimation;
+}
+
+.bacModal.bacModalLoading .popup::before {
+	background-color: rgba(255,255,255,0.5);
+	background-image: url('http://www.ajaxload.info/cache/FF/FF/FF/00/00/00/30-0.gif');
+	background-repeat: no-repeat;
+	background-position: 50% calc(50% + 80px - 32px);
+	content: '';
+	display: block;
+	height: 100%;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 100;
+}
+
+.bacModal .popup .header {
+	background-color: #686868;
+	color: #fff;
+	font-size: 20px;
+	height: 30px;
+	left: 0;
+	line-height: 30px;
+	padding-left: 10px;
+	position: absolute;
+	text-align: left;
+	top: 0;
+	width: 100%;
+}
+
+.bacModal .popup .header h4 {
+	font-size: 20px;
+}
+
+.bacModal .popup .popup-close {
+	border-left: 1px solid #fff;
+	color: #fff;
+	height: 30px;
+	position: absolute;
+	right: 0;
+	text-align: center;
+	text-decoration: none;
+	top: 0;
+	width: 30px;
+}
+
+.bacModal.signInPanel .bacModalDetailsContainer {
+	transform: translateX(-50%);
+}
+
+.bacModal .bacModalDetailsContainer {
+	width: 200%;
+	transition: transform 0.2s linear;
+}
+
+.bacModal .bacModalDetailsContainer .bacModalDetails {
+	float: left;
+	width: 50%;
+}
+
+.bacModal .bacModalDetails label {
+	display: block;
+	margin-bottom: 10px;
+}
+
+.bacModal .popup input,
+.bacModal .popup textarea {
+	padding-left: 6px;
+	padding-right: 6px;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    height: 35px;
+    line-height: 30px;
+    -webkit-appearance: none;
+}
+
+.bacModal .popup textarea {
+    height: 10em;
+	padding-top: 0;
+	padding-bottom: 0;
+	width: 100%;
+}
+
+.bacModal .popup button[type="submit"] {
+	font-weight: normal;
+    background: #F50057;
+    border-radius: 10px;
+    border: 0;
+    color: #ffffff;
+    cursor: pointer;
+    display: block;
+    font-size: 20px;
+    line-height: 1;
+    margin-top: 20px;
+    margin: 0 auto;
+    padding: 15px 8px 15px;
+    text-align: center;
+    text-decoration: none;
+    width: 200px;
+    -webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+
+.bacModal .popup button[type="submit"]:hover {
+    background: #FF0F66;
+}
+
+.bacModalText {
+	margin-bottom: 20px;
+}
+
+.bacModalText,
+.bacModalText p {
+	font-size: 14px;
+	line-height: 1.4em;
+}
+
