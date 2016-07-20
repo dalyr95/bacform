@@ -1,0 +1,1463 @@
+<%@ page contentType="text/html; charset=iso-8859-1" language="java"
+	import="com.buyacar.businessobjects.*,com.buyacar.util.*,java.util.*,com.buyacar.businessobjects.accounting.delivery.DeliveryMethod"
+	errorPage=""%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="/WEB-INF/buyacar-tags.tld" prefix="buyacar"%>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/buyacar-el.tld" prefix="buyacar-el"%>
+<%@ taglib uri='http://java.sun.com/jsp/jstl/core' prefix='c'%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="s" uri="/struts-tags-bac"%>
+
+<%@page
+	import="com.buyacar.businessobjects.accounting.delivery.DeliveryMethod"%>
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
+
+<s:set name="sessionGarage" value="sessionGarage" />
+<s:set name="sessionUser" value="sessionUser" />
+<s:set name="currentUser" value="sessionUser" />
+<s:set name="workingAccount" value="workingAccount" />
+<s:set name="adminAction" value="adminAction" />
+
+<s:set name="productAdvert" value="productAdvert" scope="request" />
+<c:set var="productTerms" scope="request" value="${productAdvert.mostRecentNonFutureTerm}" />
+<c:set var="prodTermsGroup" scope="request" value="${productTerms.prodTermsGroup}" />
+<c:set var="productData" value="${productTerms.productData}" />
+<c:set var="productDefinition" scope="request" value="${productTerms.productDefinition}" />
+<c:set var="productHome" value="${productAdvert.productHome}" />
+
+<c:set var="CAPDataType" value="${productData.CAPDataTypeObject}" />
+<c:set var="financeQuote" value="${productAdvert.financeQuote}" />
+
+<c:if test="${not empty productDefinition}">
+	<c:set var="conditionReport" value="${productDefinition.productConditionReport}" />
+</c:if>
+
+<c:set var="category" value="${productData.modelCategory}" />
+<c:set var="rangeCategory" value="${null}" />
+<c:set var="makeCategory" value="${null}" />
+<c:set var="optionRules" scope="request" value="${productAdvert.optionsRules}" />
+<s:set name="optionCodes" value="optionCodes" />
+
+
+<c:set var="vehicleTypeDescription" value="${productData.productTypeDescription}" />
+
+<c:if test="${not empty productTerms.deliveryMethodSet}">
+	<c:set var="deliveryMethodList" scope="request" value="${productTerms.deliveryMethodSet.deliveryMethodList}" />
+</c:if>
+
+<c:url var="editConditionUrl" value="/productentry/editCondition.jhtml">
+	<c:param name="productAdvertId" value="${productAdvert.id}" />
+</c:url>
+<c:url var="editOptionsUrl" value="/productentry/addCapOptions.jhtml">
+	<c:param name="productAdvertId" value="${productAdvert.id}" />
+</c:url>
+<c:url var="editPhotosUrl" value="/productentry/editPhotos.jhtml">
+	<c:param name="productDefinitionId" value="${productDefinition.id}" />
+	<c:param name="productAdvertId" value="${productAdvert.id}" />
+</c:url>
+
+<s:set name="photoHost" value="photoHost" />
+
+<s:set name="productDefinitionModel" value="productDefinitionModel" />
+
+<s:set name="numberOfCarSearches" value="numberOfCarSearches" />
+
+<c:if test="${empty productDefinitionModel}">
+   <c:set var="productDefinitionModel" value="${productDefinition}" />
+</c:if>
+
+<c:if test="${empty adminAction}">
+   <c:set var="adminAction" value="${false}" />
+</c:if>
+
+<c:if test="${not empty productDefinitionModel}">
+	<c:set var="prodDefinition" value="${productDefinitionModel}" />
+    <c:set var="productData" value="${prodDefinition.productData}" />
+    <c:set var="vehicleTypeDescription" value="${productData.vehicleTypeDescription}" />
+    <c:set var="vehicleTypeDescriptionLC" value="${vehicleTypeDescription}" />
+</c:if>
+
+<c:choose>
+	<c:when test="${not empty adminAction and adminAction}">
+		<c:set var="namespace" value="/admin/" />
+	</c:when>
+	<c:otherwise>
+		<c:set var="namespace" value="/" />
+	</c:otherwise>
+</c:choose>
+
+<c:set var="vehicleOwnedByUser"
+	value="${not empty sessionUser and not empty sessionUser.firstUserAccount.account
+	and (sessionUser.firstUserAccount.account.id == productAdvert.account.id
+    or (not empty workingAccount and (workingAccount.id == productAdvert.account.id or workingAccount.id == productAdvert.account.parentAccount.id or workingAccount.id == productAdvert.account.parentAccount.parentAccount.id)))}" />
+
+<c:choose>
+	<c:when test="${category.parent.range}">
+		<c:set var="rangeCategory" value="${category.parent}" />
+		<c:set var="makeCategory" value="${category.parent.parent}" />
+	</c:when>
+	<c:when test="${category.parent.parent.range}">
+		<c:set var="rangeCategory" value="${category.parent.parent}" />
+		<c:set var="makeCategory" value="${category.parent.parent.parent}" />
+	</c:when>
+</c:choose>
+
+<buyacar-el:seoUrl  value="${makeCategory.URLPath}category.jhtml" var="ncsMakeURL" delimeter="_" seoString="" excludeParamPrefix="excl_"  >
+	<buyacar-el:param name="categoryId" value="${makeCategory.id}" />
+</buyacar-el:seoUrl>
+
+<buyacar-el:seoUrl  value="${rangeCategory.URLPath}category.jhtml" var="ncsRangeURL" delimeter="_" seoString="" excludeParamPrefix="excl_"  >
+	<buyacar-el:param name="categoryId" value="${rangeCategory.id}" />
+</buyacar-el:seoUrl>
+
+<buyacar-el:seoUrl value="${productHome.urlPath}car.jhtml" seoString="${productData.derivative}" delimeter="_" var="productHomeUrl">
+	<buyacar-el:param name="productHomeId" value="${productHome.id}" />
+</buyacar-el:seoUrl>
+
+<c:forEach items="${deliveryMethodList}" var="delMethod">
+	<c:if test="${delMethod.defaultMethod}">
+		<c:set var="delMethodId" value="${delMethod.id}" />
+	</c:if>
+</c:forEach>
+
+<c:set var="qId">${param.quoteId}</c:set>
+<c:set var="qItemId">${param.quoteItemId}</c:set>
+
+<div class="boxGrey1MedOp">
+	
+	<p id="breadcrumb">
+		<a href="<c:out value='${ncsMakeURL}'/>"><c:out value="${makeCategory.displayName}"/></a> > <a href="<c:out value='${ncsRangeURL}'/>"><c:out value="${rangeCategory.displayName}"/></a> > <a href="<c:out value='${productHomeUrl}'/>"><c:out value="${productData.derivativeString}" /></a>
+	</p>
+	<!-- header -->
+	<h1 id="page-title">
+		<c:out value="${productTerms.vehicleFullName} (${productTerms.vehicleDetailsDisplay})" />
+	</h1>
+	<!--   end  -  header -->
+	
+	<!--start class=".savesAndDiscounts"  -->
+
+	<c:set var="vehiclePriceSetInPriceTile" scope="request">
+		<c:choose>
+			<c:when test="${productTerms.price.money > 0}">
+				<fmt:formatNumber value="${productTerms.price}"
+					maxFractionDigits="0" type="currency" currencySymbol="&pound;" />
+			</c:when>
+			<c:otherwise>&pound;CALL US</c:otherwise>
+		</c:choose>
+	</c:set>
+	<c:set var="vehicleSavingSetInPriceTile" scope="request">
+		<fmt:formatNumber value="${productAdvert.moneySaving}"
+			maxFractionDigits="0" type="currency" currencySymbol="&pound;" />
+	</c:set>
+
+	<!-- end class=".savesAndDiscounts"  -->
+
+
+	<div class="boxBody bgWht used-car-gallery">
+		<c:if test="${vehicleOwnedByUser}">
+			<div class="addAdOptions">
+				<div class="tabSteps">
+					<ul>
+						<c:choose>
+							<c:when test="${empty productAdvert}">
+								<c:url value="/productentry/addCar.jhtml" var="addURL" />
+								<li <c:if test="${tab=='car'}">class="tabActive"</c:if>><a
+									href="<c:out value='${addURL}'/>">CAR</a></li>
+								<li <c:if test="${tab=='account'}">class="tabActive"</c:if>>CONTACT</li>
+								<li <c:if test="${tab=='edit'}">class="tabActive"</c:if>>EDIT</li>
+							</c:when>
+							<c:otherwise>
+								<c:url var="editAdvertUrl"
+									value="/productentry/editAdvert.jhtml">
+									<c:param name="productAdvertId" value="${productAdvert.id}" />
+								</c:url>
+								<c:url var="accountUrl"
+									value="/productentry/editAccountDetails.jhtml">
+									<c:param name="productAdvertId" value="${productAdvert.id}" />
+								</c:url>
+								<li <c:if test="${tab=='car'}">class="tabActive"</c:if>>CAR</li>
+								<li <c:if test="${tab=='account'}">class="tabActive"</c:if>><a
+									href='<c:out value="${accountUrl}"/>'>CONTACT</a></li>
+								<li <c:if test="${tab=='edit'}">class="tabActive"</c:if>><a
+									href='<c:out value="${editAdvertUrl}"/>'>EDIT</a></li>
+							</c:otherwise>
+						</c:choose>
+						<c:choose>
+							<c:when test="${not empty productAdvert.productDefinition}">
+								<c:url var="editConditionUrl"
+									value="/productentry/editCondition.jhtml">
+									<c:param name="productAdvertId" value="${productAdvert.id}" />
+								</c:url>
+								<c:url var="editOptionsUrl"
+									value="/productentry/addCapOptions.jhtml">
+									<c:param name="productAdvertId" value="${productAdvert.id}" />
+								</c:url>
+								<c:url var="editPhotosUrl"
+									value="/productentry/editPhotos.jhtml">
+									<c:param name="productDefinitionId"
+										value="${productAdvert.productDefinition.id}" />
+									<c:param name="productAdvertId" value="${productAdvert.id}" />
+								</c:url>
+								<li <c:if test="${tab=='condition'}">class="tabActive"</c:if>><a
+									href='<c:out value="${editConditionUrl}"/>'>CONDITION</a></li>
+								<li <c:if test="${tab=='options'}">class="tabActive"</c:if>><a
+									href='<c:out value="${editOptionsUrl}"/>'>OPTIONS</a></li>
+								<li <c:if test="${tab=='photos'}">class="tabActive"</c:if>><a
+									href='<c:out value="${editPhotosUrl}"/>'>PHOTOS</a></li>
+							</c:when>
+							<c:otherwise>
+								<li>CONDITION</li>
+								<li>OPTIONS</li>
+								<li>PHOTOS</li>
+							</c:otherwise>
+						</c:choose>
+						<c:choose>
+							<c:when test="${empty productAdvert}">
+								<li <c:if test="${tab=='advert'}">class="tabActive"</c:if>>ADVERT</li>
+							</c:when>
+							<c:otherwise>
+								<buyacar-el:seoUrl
+									value="${productAdvert.productHome.urlPath}deal.jhtml"
+									var="prodAdvertURL" delimeter="_"
+									seoString="${productAdvert.productHome.SEOString}"
+									excludeParamPrefix="excl_">
+									<buyacar-el:param name="productAdvertId"
+										value="${productAdvert.id}" />
+								</buyacar-el:seoUrl>
+								<c:set value="${prodAdvertURL}" var="lastStepURL"
+									scope="request" />
+								<li <c:if test="${tab=='advert'}">class="tabActive"</c:if>><a
+									href='<c:out value="${prodAdvertURL}"/>'>ADVERT</a></li>
+							</c:otherwise>
+						</c:choose>
+					</ul>
+				</div>
+
+				<c:if
+					test="${not empty productDefinition and (!productDefinition.conditionReportAvailable or empty productDefinition.productDefinitionCapOptions or empty productDefinition.validBinaryContentImages)}">
+					<div class="ointro">
+						<c:if test="${productAdvert.createdToday}">
+							<p class="congrat">Congratulations !! You have successfully
+								advertised your car, your advert is shown below this box</p>
+						</c:if>
+						<p class="f2">To get the most from your advert, we recommend
+							you enhance your advert. It's free and takes just a few extra
+							minutes of your time. Click on one of the options below to get
+							started.</p>
+					</div>
+					<table border="0" cellpadding="3" cellspacing="0"
+						class="quoteAlerts">
+						<c:if test="${!productDefinition.conditionReportAvailable}">
+							<tr class="qStInfo">
+								<td class="qTD1"><h5>CONDITION REPORT</h5></td>
+								<td class="qTD2">To get the most from your advert, we
+									recommend you add a condition report.</td>
+								<td class="qTD3"><a
+									href="<c:out value='${editConditionUrl}'/>" class="btn bt2">ADD
+										CONDITION</a></td>
+							</tr>
+						</c:if>
+						<c:if
+							test="${empty productDefinition.productDefinitionCapOptions}">
+							<tr class="qStInfo">
+								<td class="qTD1"><h5>VEHICLE OPTIONS</h5></td>
+								<td class="qTD2">Update the advert with a list of vehicle
+									options, such as &quot;metallic paint&quot; and &quot;electric
+									windows&quot;.</td>
+								<td class="qTD3"><a
+									href="<c:out value='${editOptionsUrl}'/>" class="btn bt2">ADD
+										OPTIONS</a></td>
+							</tr>
+						</c:if>
+						<c:if test="${empty productDefinition.validBinaryContentImages}">
+							<tr class="qStInfo">
+								<td class="qTD1"><h5>PHOTOS</h5></td>
+								<td class="qTD2">Make your advert stand out, add as many
+									photos as you like.</td>
+								<td class="qTD3"><a
+									href="<c:out value='${editPhotosUrl}'/>" class="btn bt2">ADD
+										PHOTOS</a></td>
+							</tr>
+						</c:if>
+					</table>
+				</c:if>
+				<div class="ofoot">
+					<c:url var="removeURL" value="/productentry/removeAdvert.jhtml">
+						<c:param name="productAdvertId" value="${productAdvert.id}" />
+					</c:url>
+					<c:choose>
+						<c:when test="${productTerms.expired}">
+							<p>
+								Your advert expired on
+								<fmt:formatDate value="${productTerms.dateEffectiveTo}"
+									pattern="dd MMM yyyy" />
+								and is currently not shown in our search.
+							</p>
+						</c:when>
+						<c:when
+							test="${productTerms.active and empty productTerms.dateEffectiveTo}">
+							<p>
+								Your advert is active and will be shown in our search results
+								until
+								<fmt:formatDate pattern="dd MMM yyyy"
+									value="${productTerms.dateEffectiveTo}" />
+								.
+							</p>
+							<a href="<c:out value='${removeURL}'/>" class="btn bt1 red"
+								onclick="return confirm('Are you sure? If you click OK your advert will no longer be shown in the search results')">DISCONTINUE
+								ADVERT</a>
+						</c:when>
+						<c:otherwise>
+							<p>Your advert is active and shown in our search results, it
+								will not expire.</p>
+							<a href="<c:out value='${removeURL}'/>" class="btn bt1 red"
+								onclick="return confirm('Are you sure? If you click OK your advert will no longer be shown in the search results')">DISCONTINUE
+								ADVERT</a>
+						</c:otherwise>
+					</c:choose>
+					<c:if test="${productAdvert.createdToday}">
+						<p class="gry">It is possible that newly created adverts will
+							not be shown in the search results straight away. It can take
+							several hours for our search results to update, so if you can't
+							find your car try checking again later.</p>
+					</c:if>
+					<buyacar-el:accessChecker url="/content/terms/newvehicles">
+						<c:url value="/productentry/addCar.jhtml" var="addURL" />
+						<a href="<c:out value='${addURL}'/>" class="btn bt1 mt10">CREATE
+							ANOTHER ADVERT</a>
+					</buyacar-el:accessChecker>
+					<buyacar-el:accessChecker url="/content/terms/advertedit">
+						<c:if test="${empty addURL}">
+							<c:url value="/productentry/addCar.jhtml" var="addURL" />
+							<a href="<c:out value='${addURL}'/>" class="btn bt1 mt10">CREATE
+								ANOTHER ADVERT</a>
+						</c:if>
+					</buyacar-el:accessChecker>
+				</div>
+			</div>
+		</c:if>
+		<c:if test="${numberOfCarSearches > 0}">
+			<div class="interested"><c:out value="${numberOfCarSearches}" /> people looked at this car in the last 24 hours. Secure it for yourself with a fully refundable deposit</div>
+		</c:if>
+		<div class="topPriceInfo">
+			<c:choose>
+				<c:when
+					test="${not empty productDefinition and not empty productDefinition.validBinaryContentImages}">
+					<div class="scrollable">
+					
+						<div class="position"></div>
+						<div class="next scrollerBtn"></div>
+						<div class="prev scrollerBtn"></div>
+							<div id="imgWrapper">
+								<div class="items">
+									<c:forEach var="prodDefImages"
+										items="${productDefinition.validBinaryContentImages}">
+										<c:set var="binaryContentImage"
+											value="${prodDefImages.binaryContentImage}" />
+										<c:if test="${not empty binaryContentImage.intImageFileName}">
+											<c:set var="imgRender"
+												value="${photoHost}/img/med/${binaryContentImage.intImageFileName}" />
+											<div><img src="<c:out value='${imgRender}' />"
+												alt="${productData.imgAltString}" /></div>
+										</c:if>
+									</c:forEach>
+								</div>
+							</div>
+					</div>
+				</c:when>
+				<c:otherwise>
+					<c:choose>
+						<c:when
+							test="${not empty productData.binaryContentImage.intImageFileName}">
+							<c:set var="binRender"
+								value="${photoHost}/img/med/${productData.binaryContentImage.intImageFileName}" />
+						</c:when>
+						<c:otherwise>
+							<c:set var="binRender"
+								value="${photoHost}/images4/icons/awaiting_photo_med.jpg" />
+						</c:otherwise>
+					</c:choose>
+					<div class="scrollable nvdImage-holder">
+					<img src="<c:out value='${binRender}' />" class="nvdImage"
+						alt="<c:out value='${productData.imgAltString}' />" />
+						</div>
+				</c:otherwise>
+			</c:choose>
+			<c:if
+				test="${not empty productDefinition and not empty productDefinition.validBinaryContentImages}">
+				<div class="naviWrapper">
+					<div class="navi">
+						<c:forEach var="prodDefImages"
+							items="${productDefinition.validBinaryContentImages}"
+							varStatus="count">
+							<c:set var="binaryContentImage"
+								value="${prodDefImages.binaryContentImage}" />
+								<c:if test="${not empty binaryContentImage.intImageFileName}">
+									<c:set var="thumbBinImage"
+										value="${photoHost}/img/sml/${binaryContentImage.intImageFileName}" />
+									<c:choose>
+										<c:when test="${count.index == 0}">
+											<span class="active"><img src="<c:out value='${thumbBinImage}' />"
+													alt="<c:out value='${productData.imgAltString}' />" /></span>
+										</c:when>
+										<c:otherwise>
+											<span><img src="<c:out value='${thumbBinImage}' />"
+												alt="<c:out value='${productData.imgAltString}' />" /></span>
+										</c:otherwise>
+									</c:choose>
+								</c:if>
+							</c:forEach>
+					</div>
+				</div>
+				</c:if>
+				<div class="finance_block">
+					<p class="title-price"><fmt:formatNumber value="${productAdvert.priceLessDepositContribution}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /></p>
+					<c:if test="${not empty productTerms.financeDepositContribution}">
+						<p class="finDisc">Includes a finance contribution of <fmt:formatNumber value="${productTerms.financeDepositContribution}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /><br/>
+						Or pay a cash price of <fmt:formatNumber value="${productTerms.price}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /></p>
+					</c:if>
+
+					<c:if test="${productTerms.prodTermsGroup.financeQuoteValidWithoutChecks}">
+						<p class="finAvFrom">Finance available:</p>
+						<p class="finPayAm"><fmt:formatNumber value="${financeQuote.paymentAmount}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /> per month</p>
+						<p class="finRateOfI"><c:out value="${financeQuote.rateOfInterest}" escapeXml="false" />% interest rate</p>
+						
+					</c:if>
+
+					<c:choose>
+						<c:when test="${qId == 'null' or empty qId or qId == '' or qItemId == 'null' or empty qItemId or qItemId == ''}">							
+							<c:url value="/finance/startNewFinanceApplication.jhtml" var="startFinanceApplication" >
+								<c:param name="prodAdvertId" value="${productAdvert.id}" />
+								<c:param name="financeQuoteId" value="${financeQuote.id}" />
+								<c:param name="deliveryMethodId" value="${delMethodId}" />
+								<c:param name="source" value="vd1" />
+							</c:url>
+						</c:when>
+						<c:otherwise>
+							<c:url value="/finance/startNewFinanceApplication.jhtml" var="startFinanceApplication" >
+								<c:param name="quoteId" value="${qId}" />
+								<c:param name="quoteItemId" value="${qItemId}" />
+								<c:param name="financeQuoteId" value="${financeQuote.id}" />
+								<c:param name="source" value="vd1" />
+							</c:url>
+						</c:otherwise>
+					</c:choose>
+
+					<a class="finance-submitbtn" onclick="sendGA(this)" href="<c:out value='${startFinanceApplication}' escapeXml='false' />">Apply for finance</a>
+
+					<p>Secure this car today<c:if test="${not empty productTerms.depositAmount}"> with a <strong>fully refundable deposit of <fmt:formatNumber value="${productTerms.depositAmount}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /></strong></c:if></p>
+
+					
+
+					<c:choose>
+						<c:when test="${qId == 'null' or empty qId or qId == '' or qItemId == 'null' or empty qItemId or qItemId == ''}">
+							<c:url value="/reserve/startNewReservation.jhtml" var="reservationUrl" >
+								<c:param name="prodAdvertId" value="${productAdvert.id}" />
+								<c:param name="deliveryMethodId" value="${delMethodId}" />
+							</c:url>
+						</c:when>
+						<c:otherwise>
+							<c:url value="/reserve/startNewReservation.jhtml" var="reservationUrl" >
+								<c:param name="quoteId" value="${qId}" />
+								<c:param name="quoteItemId" value="${qItemId}" />
+							</c:url>
+						</c:otherwise>
+					</c:choose>
+					
+					<c:choose>
+						<c:when test="${qId == 'null' or empty qId or qId == '' or qItemId == 'null' or empty qItemId or qItemId == ''}">
+							<c:url value="/reserve/startNewQuestion.jhtml" var="questionUrl" >
+								<c:param name="prodAdvertId" value="${productAdvert.id}" />
+								<c:param name="deliveryMethodId" value="${delMethodId}" />
+							</c:url>
+						</c:when>
+						<c:otherwise>
+							<c:url value="/reserve/startNewQuestion.jhtml" var="questionUrl" >
+								<c:param name="quoteId" value="${qId}" />
+								<c:param name="quoteItemId" value="${qItemId}" />
+							</c:url>
+						</c:otherwise>
+					</c:choose>
+
+					<a class="finance-submitbtn" id="reservethiscar" onclick="sendGA(this)" href="<c:out value='${reservationUrl}' />">Reserve this car</a>
+
+					<p>or call us on: <span style="font-size: 1.2em">0800 050 2333</span></p>
+
+					<div class="finance-pinklinks-wrapper">
+						<div class="finance-pinklinks" style="text-align:left"><a href="#" onclick="sendGA(this);" data-action="ask">Ask a question</a></div>
+						<div class="finance-pinklinks"><a href="#" onclick="sendGA(this);" data-action="save">Save this car</a></div>
+						<div class="finance-pinklinks" style="text-align:right"><a href="#" onclick="sendGA(this);" data-action="exchange">Part exchange</a></div>
+					</div>
+
+					<c:if test="${productTerms.prodTermsGroup.financeQuoteValidWithoutChecks}">
+						<p class="good-credit-examples"><b>Representative example</b><br />
+						<c:out value="${financeQuote.financeType}" /> loan amount: <fmt:formatNumber value="${financeQuote.amountFinanced}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /><br />
+						Deposit amount: <fmt:formatNumber value="${financeQuote.totalDeposit}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /><br />
+						Representative APR: <c:out value="${financeQuote.apr}" />%<br />
+						Loan term: <c:out value="${financeQuote.periodMonths}" /> months<br />
+						Monthly repayments: <fmt:formatNumber value="${financeQuote.paymentAmount}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /><br />
+						<c:if test="${financeQuote.financeType eq 'PCP'}">
+							Optional final payment: <fmt:formatNumber value='${financeQuote.finalPayment}'
+											maxFractionDigits='0' type='currency'
+											currencySymbol='&pound;' /><br/>
+						</c:if>
+						Total loan amount repayable: <fmt:formatNumber value="${financeQuote.totalPayable}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /></p>
+
+					</c:if>
+				</div>
+		</div>
+
+		<s:form id="parkCarForm" name="parkCarForm" action="startNewQuote"
+			namespace="${namespace}mybuyacar" theme="simple"
+			onsubmit="return caprules.rsubmit();" target="_top"
+			cssClass="carOptionsForm">
+			<s:hidden name="financeFirstPage" value="true" />
+			<s:hidden id="productAdvertId" name="productAdvertId" value="${productAdvert.id}" />
+			<s:hidden name="productDefinitionId" />
+			<s:hidden name="quoteId" />
+			<s:hidden name="quoteAssistantRulesError"
+				id="quoteAssistantRulesError" />
+			<c:if test="${not empty productDefinitionId}">
+				<s:hidden name="updateOptions" value="true" />
+			</c:if>
+
+
+			<!--start class=".used-car-group-content"  -->
+			<div class="used-car-group-content">
+
+				<!--start class=".used-car-key-features"  -->
+				<div class="used-car-key-features">
+					<p class="block-title">Key features:</p>
+					<div class="used-car-key-features-details increasefontsize">
+						<c:choose>
+							<c:when test="${prodDefinition.productDataAvailable}">
+								<c:if test="${not empty conditionReport.carDateOfReg}">
+									<div class="key-data key-data-reg">Reg: <c:out value="${conditionReport.carDateOfReg}" /></div>
+								</c:if>
+								<div class="key-data key-data-gearbox">Gearbox: <c:out value="${prodDefinition.productData.transmission}" /></div>
+								<c:if test="${not empty conditionReport.mileage}">
+									<div class="key-data key-data-mileage">Mileage: <fmt:formatNumber value="${conditionReport.mileage}" pattern="###,###" /> miles</div>
+								</c:if>
+								<div class="key-data key-data-style">Style: <c:out value="${prodDefinition.productData.bodyStyle}" /></div>
+								<div class="key-data key-data-fuel">Fuel: <c:out value="${prodDefinition.productData.fuelType}" /></div>
+								<div class="key-data key-data-colour">Colour: <c:out value="${conditionReport.colour}" /></div>
+								</c:when>
+								<c:otherwise>
+									<c:if test="${not empty conditionReport.carDateOfReg}">
+										<div class="key-data key-data-reg">Reg: <c:out value="${conditionReport.carDateOfReg}" /></div>
+									</c:if>
+									<c:if test="${not empty conditionReport.mileage}">
+										<div class="key-data key-data-mileage">Mileage: <fmt:formatNumber value="${conditionReport.mileage}" pattern="###,###" /> miles</div>
+									</c:if>
+								</c:otherwise>
+							</c:choose>
+					</div>
+					<c:choose>
+						<c:when
+							test="${not empty conditionReport.optionsDescription and conditionReport.optionsDescriptionLength < 500}">
+									<p class="additional-features"><b>Additional features:</b> <c:out value="${conditionReport.optionsDescription}" /></p>
+						</c:when>
+					</c:choose>
+				</div>
+				<!--end class=".used-car-key-features"  -->
+
+				<c:if test="${not empty productAdvert.siteComment}">
+						<p class="ucSiteComment"> <c:set var="desc"
+										scope="page" value="${productAdvert.siteComment}" /> <%
+ 							String desc = (String) pageContext.getAttribute("desc");
+ 							%> <%=desc.replaceAll("\n", "<br/>")%>
+							</p>
+					</c:if>
+				<!--start class=".used-car-benefits-from-buyacar"  -->
+				<div class="used-car-benefits-from-buyacar">
+					<p class="block-title">Benefits of buying from Buyacar</p>
+					<p class="block-strap">Enjoy complete peace of mind when you buy with Buyacar.</p>
+					<div class="used-car-benefits-details increasefontsize">
+						<div class="benefit-data benefit-hpi">HPI checked</div>
+						<div class="benefit-data clipboard">Approved inspection</div>
+						<div class="benefit-data car">14 days money-back</div>
+						<div class="benefit-data benefit-check">UK dealer sourced</div>
+						<div class="benefit-data home">Delivery to your door</div>
+						<div class="benefit-data benefit-check">A range of warranties</div>
+					</div>
+
+					<c:choose>
+						<c:when test="${qId == 'null' or empty qId or qId == '' or qItemId == 'null' or empty qItemId or qItemId == ''}">
+							<c:url value="/finance/startNewFinanceApplication.jhtml" var="startFinanceApplication" >
+								<c:param name="prodAdvertId" value="${productAdvert.id}" />
+								<c:param name="financeQuoteId" value="${financeQuote.id}" />
+								<c:param name="deliveryMethodId" value="${delMethodId}" />
+								<c:param name="source" value="vd2" />
+							</c:url>
+						</c:when>
+						<c:otherwise>
+							<c:url value="/finance/startNewFinanceApplication.jhtml" var="startFinanceApplication" >
+								<c:param name="quoteId" value="${qId}" />
+								<c:param name="quoteItemId" value="${qItemId}" />
+								<c:param name="financeQuoteId" value="${financeQuote.id}" />
+								<c:param name="source" value="vd2" />
+							</c:url>
+						</c:otherwise>
+					</c:choose>
+					<a class="submitbtn" onclick="sendGA(this)" href="<c:out value='${startFinanceApplication}' escapeXml='false' />">Apply for finance</a>
+				</div>
+				<!--end class=".used-car-benifits-from-buyacar"  -->
+
+				<!--start class=".used-car-more-details"  -->
+				<c:if test="${prodDefinition.conditionReportAvailable}">
+					<div class="used-car-more-details">
+						<div class="accordion accordion1 expanded">
+							<dt>
+								<div class="accordion-title accordion-title-1 odd expanded">
+									<span class="faq-spinner"> </span> More details about this car
+								</div>
+							</dt>
+							<dd id="accordion1" class="accordion-content">
+								<p id="accordion1-content">
+									<c:set var="conditionReport"
+										value="${prodDefinition.productConditionReport}" />
+									<c:if test="${not empty conditionReport.carDateOfReg}">
+										Date of Registration: <c:out value="${conditionReport.carDateOfReg}" />;
+									</c:if>
+									<c:if test="${not empty conditionReport.mileage}">
+										Mileage since new: <c:out value="${conditionReport.mileage}" /> miles;
+									</c:if>
+									<c:if test="${not empty conditionReport.colour}">
+										The exterior colour: <c:out value="${conditionReport.colour}" />;
+									</c:if>
+									<c:if test="${not empty conditionReport.exteriorMetallicConstant or adminAction}">
+										Type of paint: <c:out value="${conditionReport.exteriorMetallicConstant}" />;
+									</c:if>
+									<c:if test="${not empty conditionReport.registrationDate and empty productAdvert}">
+										Registration date: <c:out value="${conditionReport.registrationDate}" />;
+									</c:if>
+									<c:if
+										test="${empty conditionReport.numberOfOwnersConstant and not empty conditionReport.numRegisteredKeepers and conditionReport.numRegisteredKeepers > 0}">
+										Number of previous owners: <c:out value="${conditionReport.numRegisteredKeepers}" />;
+									</c:if>
+									<c:if test="${conditionReport.exDemo}">
+										This <c:out value="${prodDefinition.productData.productTypeDescription}" /> is an ex-demonstrator;
+									</c:if>
+									<c:if test="${conditionReport.approvedUsed}">
+										This <c:out value="${prodDefinition.productData.productTypeDescription}" /> is an approved used vehicle;
+									</c:if>
+									<c:if test="${not empty conditionReport.warrantyExpireDate and conditionReport.warrantyExpireDateInFuture}">
+										Warranty expire date: <fmt:formatDate pattern="dd MMM yyyy" value="${conditionReport.warrantyExpireDate}" />
+									</c:if>
+									<c:choose>
+										<c:when test="${not empty conditionReport.optionsDescription and conditionReport.optionsDescriptionLength < 500}">
+											<c:out value="${conditionReport.optionsDescription}" />;
+										</c:when>
+										<c:when test="${not empty conditionReport.optionsDescription}">
+											<c:out value="${conditionReport.optionsDescription}" />;
+										</c:when>
+									</c:choose>
+									<c:if test="${not empty conditionReport.faceLiftModelConstant }">
+										Is this vehicle an updated facelift model: <c:out value="${conditionReport.faceLiftModelConstant}" />;
+									</c:if>
+									<c:if test="${not empty conditionReport.ukVehicleConstant or adminAction}">
+										Is this a UK vehicle: <c:out value="${conditionReport.ukVehicleConstant}" />;
+									</c:if>
+									<c:if test="${prodDefinition.productData.lcvVan}">
+										Is the <c:out
+													value="${prodDefinition.productData.productTypeDescription}" /> subject to VAT on the price?<c:choose>
+											<c:when test="${prodDefinition.plusCommercialVAT}">Yes;</c:when>
+											<c:otherwise>No;</c:otherwise>
+										</c:choose>
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.motLengthConstant or adminAction}">
+										Number of months until the MOT expires: <c:out value="${conditionReport.motLengthConstant}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.nextServiceConstant or adminAction}">
+										Date of when the next service is due: <c:out value="${conditionReport.nextServiceConstant}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.generalConditionCode or adminAction}">
+										The general condition of the vehicle: <c:out
+													value="${conditionReport.generalConditionConstant}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.accidentsConstant or adminAction}">
+										Has the vehicle been involved in any accidents: <c:out value="${conditionReport.accidentsConstant}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.mileageCorrectConstant or adminAction}">
+										Is the mileage correct for the vehicle since new: <c:out
+													value="${conditionReport.mileageCorrectConstant}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.numberOfKeys or adminAction}">
+										Number of Keys: <c:out value="${conditionReport.numberOfKeys}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.encumbrance or adminAction}">
+										Balance of finance agreement or other encumbrance: <c:out value="${conditionReport.encumbrance}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.serviceHistoryCode or adminAction}">
+										Service history documentation: <c:out
+													value="${conditionReport.serviceHistoryConstant}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.documentsPresentConstant or adminAction}">
+										Vehicle documentation: <c:out
+													value="${conditionReport.documentsPresentConstant}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.numberOfOwnersConstant or adminAction}">
+										Number of previous owners: <c:out
+													value="${conditionReport.numberOfOwnersConstant}" />;
+									</c:if>
+									<c:if
+										test="${not empty conditionReport.usagePurposeCode or adminAction}">
+										Purpose the vehicle been used for: <c:out value="${conditionReport.usagePurposeConstant}" />;
+									</c:if>
+								</p>
+							</dd>
+						</div>
+					</div>
+				</c:if>
+
+				<!--start class=".used-car-condition-report"  -->
+				<div class="used-car-condition-report">
+
+					<div class="accordion accordion2 expanded">
+						<dt>
+							<div class="accordion-title accordion-title-2 odd expanded">
+								<span class="faq-spinner"> </span> Car condition report
+							</div>
+						</dt>
+							<dd id="accordion2" class="accordion-content">
+								<div class="condition-wrapper">
+									<div class="condition-diagram">
+										<img
+											src="<%=request.getContextPath()%>/images4/svgs/used-car-condition-diagram.svg"
+											alt="included" />
+									</div>
+									<div class="condition-details">
+										<div class="condition-left">front light(s)</div>
+										<div class="condition-right"><c:out value="${conditionReport.frontLightsConstant}" /></div>
+										<div class="condition-left">front bumper</div>
+										<div class="condition-right"><c:out value="${conditionReport.frontBumperConstant}" /></div>
+										<div class="condition-left">bonnet / front</div>
+										<div class="condition-right"><c:out value="${conditionReport.bonnetFrontConstant}" /></div>
+										<div class="condition-left">windscreen</div>
+										<div class="condition-right"><c:out value="${conditionReport.windscreenConstant}" /></div>
+										<div class="condition-left">rear light(s)</div>
+										<div class="condition-right"><c:out value="${conditionReport.rearLightsConstant}" /></div>
+										<div class="condition-left">rear bumper</div>
+										<div class="condition-right"><c:out value="${conditionReport.rearBumperConstant}" /></div>
+										<div class="condition-left">tailgate / bootlid</div>
+										<div class="condition-right"><c:out value="${conditionReport.tailgateBootlidConstant}" /></div>
+										<div class="condition-left">door mirror(s)</div>
+										<div class="condition-right"><c:out value="${conditionReport.doorMirrorsConstant}" /></div>
+										<div class="condition-left">roof</div>
+										<div class="condition-right"><c:out value="${conditionReport.roofConstant}" /></div>
+										<div class="condition-left">seats</div>
+										<div class="condition-right"><c:out value="${conditionReport.seatsConstant}" /></div>
+										<div class="condition-left">carpets</div>
+										<div class="condition-right"><c:out value="${conditionReport.carpetsConstant}" /></div>
+										<div class="condition-left">stereo / navigation / etc</div>
+										<div class="condition-right"><c:out value="${conditionReport.stereoConstant}" /></div>
+										<div class="condition-left">air conditioning</div>
+										<div class="condition-right"><c:out value="${conditionReport.airConConstant}" /></div>
+									</div>
+								</div>
+							</dd>
+						</div>
+					</div>
+					<!--end class=".used-car-condition-report"  -->
+
+		<!--start delivery options class=".used-car-more-details"  -->
+				<c:if test="${not empty deliveryMethodList and not productAdvert.customerCreatedQuote}">
+					<div class="used-car-delivery-options">
+						<div class="accordion accordion3 contracted">
+							<dt>
+								<div class="accordion-title accordion-title-3 odd contracted">
+									<span class="faq-spinner"> </span> Delivery options
+								</div>
+							</dt>
+							<dd id="accordion3" class="accordion-content">
+								<p id="accordion1-content">We'll deliver this car direct to your door. Our standard charge for England and Wales is included in your finance quote and you can choose enhanced or longer-distance delivery here.</p>
+								<ul class="deliveryOptions">
+									<c:forEach items="${deliveryMethodList}" var="delMethod"
+						varStatus="index">
+						<%
+							DeliveryMethod deliveryMethod = (DeliveryMethod) pageContext.getAttribute("delMethod") ;
+															   List<DeliveryMethod> localList = new ArrayList<DeliveryMethod>() ;
+															   localList.add(deliveryMethod);
+															   String delMethodDisplay = deliveryMethod.getDescription();
+															   request.setAttribute("localList",localList);
+															   request.setAttribute("delMethodDisplay",delMethodDisplay);
+										                               request.setAttribute("emptyString","");
+						%>
+						<li>
+							<s:radio name="deliveryMethodId"
+									cssClass="isDefaultDelivery${delMethod.defaultMethod}"
+									list="#request.localList" listValue="#request.emptyString"
+									listKey="id" />
+							<span class="delDescription"><c:out value="${delMethod.description}" /></span>
+							<span class="delAmount">
+								<fmt:formatNumber value="${delMethod.deliveryCost}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" />
+							<c:if test="${delMethod.priceIsNet}">
+								+VAT
+							</c:if>	
+							</span>
+							
+						</li>
+					</c:forEach>
+					</ul>
+								
+							</dd>
+						</div>
+					</div>
+				</c:if>
+
+				
+
+					<!--start class=".used-car-benefits-from-buyacar"  -->
+					<div class="used-car-get-finance-from-buyacar">
+						<p class="block-title">Want finance? We've got you covered!</p>
+						<p style="font-size: 125%;">Buyacar is a credit broker and not a lender. Our partners include:</p>
+						<div id="finance-partner-logos">
+							<img src="<%=request.getContextPath()%>/productadvertusedcar/images/barclay.png">
+							<img src="<%=request.getContextPath()%>/productadvertusedcar/images/closebrothers.png">
+							<img src="<%=request.getContextPath()%>/productadvertusedcar/images/moneyway.png">
+							<img src="<%=request.getContextPath()%>/productadvertusedcar/images/moneybarn.png">
+							<img src="<%=request.getContextPath()%>/productadvertusedcar/images/hitachi.png">
+						</div>
+						<p class="block-strap">Choose from our range of finance options</p>
+						<div class="used-car-finance-details increasefontsize">
+							<div class="finance-data benefit-check">Zero deposit and low monthly plans</div>
+							<div class="finance-data benefit-check">Borrow extra money</div>
+							<div class="finance-data benefit-check">Get a personalised PCP or HP quote</div>
+							<div class="finance-data benefit-check">Poor credit rating? No problem</div>
+						</div>
+						
+						<c:choose>
+							<c:when test="${qId == 'null' or empty qId or qId == '' or qItemId == 'null' or empty qItemId or qItemId == ''}">
+								<c:url value="/finance/startNewFinanceApplication.jhtml" var="startFinanceApplication" >
+									<c:param name="prodAdvertId" value="${productAdvert.id}" />
+									<c:param name="financeQuoteId" value="${financeQuote.id}" />
+									<c:param name="deliveryMethodId" value="${delMethodId}" />
+									<c:param name="source" value="vd3" />
+								</c:url>
+							</c:when>
+							<c:otherwise>
+								<c:url value="/finance/startNewFinanceApplication.jhtml" var="startFinanceApplication" >
+									<c:param name="quoteId" value="${qId}" />
+									<c:param name="quoteItemId" value="${qItemId}" />
+									<c:param name="financeQuoteId" value="${financeQuote.id}" />
+									<c:param name="source" value="vd3" />
+								</c:url>
+							</c:otherwise>
+						</c:choose>
+						<a class="submitbtn" onclick="sendGA(this)" href="<c:out value='${startFinanceApplication}' escapeXml='false' />">Apply for finance</a>
+					</div>
+					<!--end class=".used-car-benifits-from-buyacar"  -->
+				
+				<s:set name="validFinanceQuotes" value="false" />
+				<c:forEach items="${prodTermsGroup.financeQuotes}" var="fQuote">
+						<c:if test="${not fQuote.financeQuoteExpired}">
+							<s:set name="validFinanceQuotes" value="true" />
+						</c:if>
+				</c:forEach>
+				
+				<c:if test="${not empty prodTermsGroup.financeQuotes and validFinanceQuotes}">
+				<!--start class=".used-car-multi-finance-deals"  -->
+				<div class="used-car-multi-finance-deals">
+					<p class="block-title">Representative finance examples for this car</p>
+					<p style="font-size: 125%;">Get a great deal at low rates - see the examples below. Click to apply now, and get a personalised quote to suit your budget</p>
+					
+					<s:set name="lowest" value="true" />
+					
+					<c:forEach items="${prodTermsGroup.financeQuotes}" var="fQuote">
+						<c:if test="${not fQuote.financeQuoteExpired}">
+							<div class="lowest-monthly">
+								<c:if test="${lowest}">
+									<div class="boldify">Best for lowest monthly payment:</div>
+									<s:set name="lowest" value="false" />
+								</c:if>
+								<div class="deal-info">
+									<div class="deal-info-16 apr">
+										<span><c:out value="${fQuote.rateOfInterest}" />%</span>
+										<br />Interest rate
+									</div>
+									<div class="deal-info-16 permonth">
+										<span><fmt:formatNumber value="${fQuote.paymentAmount}" maxFractionDigits="0" type="currency" currencySymbol="&pound;" /></span>
+										<br />Per month
+									</div>
+									<div class="deal-info-16 pcp">
+										<div class="pcp-tooltip">
+											<c:if test="${fQuote.financeType == 'PCP'}">
+												<div class="pcp-tooltip-msg">
+													Personal Contract Purchase. <a href="http://www.buyacar.co.uk/buy_a_car_help/car_finance_and_personal_loans/article_personal_contract_purchase_loans_finance_2687.jhtml" target="_blank">What does this mean?</a>
+												</div>
+											</c:if>
+											<c:if test="${fQuote.financeType == 'Hire Purchase'}">
+												<div class="pcp-tooltip-msg">
+													Hire Purchase. <a href="http://www.buyacar.co.uk/buy_a_car_help/car_finance_and_personal_loans/article_hire_purchase_loans_car_finance_2688.jhtml" target="_blank">What does this mean?</a>
+												</div>
+											</c:if>
+										</div>
+
+										<span><c:out value="${fQuote.financeType}" /></span>
+										<br />Type of credit
+									</div>
+									<div class="deal-info-25 <c:out value="${fQuote.financeQuoteRequestDetails.lenderCssName}" />"></div>
+								</div>
+								<p class="financeDetails">
+										Deposit is
+										<fmt:formatNumber value='${fQuote.totalDeposit}'
+											maxFractionDigits='0' type='currency'
+											currencySymbol='&pound;' />, the 1st payment is
+										<fmt:formatNumber value='${fQuote.firstPayment}'
+											maxFractionDigits='0' type='currency'
+											currencySymbol='&pound;' />
+										followed by
+										<c:out value='${fQuote.numRegularPayments}' />
+										monthly payments of
+										<fmt:formatNumber value="${fQuote.paymentAmount}"
+											maxFractionDigits="0" type="currency"
+											currencySymbol="&pound;" />
+										and a
+										<c:if test="${fQuote.financeType eq 'PCP'}">optional </c:if>
+										final payment of
+										<fmt:formatNumber value='${fQuote.finalPayment}'
+											maxFractionDigits='0' type='currency'
+											currencySymbol='&pound;' />
+										<c:if test="${fQuote.financeType eq 'PCP'}"> for vehicle ownership</c:if>.
+										<c:if test="${not empty fQuote.documentationFee}"> Payments include a documentation fee of <fmt:formatNumber
+												value='${fQuote.documentationFee}'
+												maxFractionDigits='0' type='currency'
+												currencySymbol='&pound;' />
+										</c:if>
+										<c:if test="${not empty fQuote.purchaseFee}">, and a final fee of <fmt:formatNumber
+												value='${fQuote.purchaseFee}' maxFractionDigits='0'
+												type='currency' currencySymbol='&pound;' />
+										</c:if>
+										. Total of credit is
+										<fmt:formatNumber value='${fQuote.amountFinanced}'
+											maxFractionDigits='0' type='currency'
+											currencySymbol='&pound;' />.
+										<c:out value="${fQuote.apr}" />% APR Representative.
+										<c:if test="${not empty fQuote.rateOfInterest}">Rate of interest is <c:out
+												value="${fQuote.rateOfInterest}" />% Fixed.</c:if>
+										Based on OTR price of
+										<fmt:formatNumber value='${fQuote.basicPrice}'
+											maxFractionDigits='0' type='currency'
+											currencySymbol='&pound;' />
+										<c:if test="${not empty fQuote.mileagePA }"> and <c:out
+												value="${fQuote.mileagePA}" /> miles pa</c:if>.
+									</p>
+							</div>
+						</c:if>
+					</c:forEach>
+					<c:if test="${validFinanceQuotes}">
+						
+						<div class="finance-button">
+							<c:choose>
+								<c:when test="${qId == 'null' or empty qId or qId == '' or qItemId == 'null' or empty qItemId or qItemId == ''}">
+									<c:url value="/finance/startNewFinanceApplication.jhtml" var="startFinanceApplication" >
+										<c:param name="prodAdvertId" value="${productAdvert.id}" />
+										<c:param name="financeQuoteId" value="${financeQuote.id}" />
+										<c:param name="deliveryMethodId" value="${delMethodId}" />
+										<c:param name="source" value="vd4" />
+									</c:url>
+								</c:when>
+								<c:otherwise>
+									<c:url value="/finance/startNewFinanceApplication.jhtml" var="startFinanceApplication" >
+										<c:param name="quoteId" value="${qId}" />
+										<c:param name="quoteItemId" value="${qItemId}" />
+										<c:param name="financeQuoteId" value="${financeQuote.id}" />
+										<c:param name="source" value="vd4" />
+									</c:url>
+								</c:otherwise>
+							</c:choose>
+							<a class="submitbtn" onclick="sendGA(this)" href="<c:out value='${startFinanceApplication}' escapeXml='false' />">Apply for finance</a>
+						</div>
+					</c:if>
+				</div>
+				<!--end class=".used-car-multi-finance-deals"  -->
+				</c:if>
+
+			</div>
+			<!--end class=".used-car-want-finance"  -->
+
+			</div>
+			<!--end class=".used-car-more-details"  -->
+		</s:form>
+	</div>
+</div>
+
+<c:set var="whitespace" value=" " />
+
+<script type="text/javascript">//<![CDATA[
+<c:if test="${productTerms.optionsAvailable}">
+	var vrules=[<c:forEach items="${optionRules}" var="rule"> ['<fmt:formatDate pattern="dd/MM/yyyy" value="${rule.nvdRelationshipRule.nvdRelationshipPeriod.effectiveFrom}" />','<fmt:formatDate pattern="dd/MMM/yyyy" value="${rule.nvdRelationshipRule.nvdRelationshipPeriod.effectiveTo}" />','<c:out value="${rule.nvdRelationshipRule.ruleCode}"/>','<c:out value="${rule.nvdRelationshipRule.periodCode}"/>','<c:out value="${rule.nvdRelationshipRule.ruleType}"/>','<c:out value="${rule.ruleCode}"/>','<c:out value="${rule.optionCode}"/>','<c:out value="${rule.primaryOptionInt}"/>'],</c:forEach>['','','','','','','','']]
+	<c:if test="${not empty productDefinitionId}">
+		var choosenOptions =[<c:forEach items="${optionCodes}" var="identifier">['<c:out value="${identifier}"/>',0,-1],</c:forEach>[0,0]]
+	</c:if>
+</c:if>
+
+var vprice= <c:out value="${productTerms.price}" default="0"/>;
+var metallicPrice =  <c:out value="${productTerms.termsAdjustedMetallicPaintPrice}" default="0"/>;
+var isSold = false;
+var genericDescription = "<c:out value='${fn:toLowerCase(CAPDataType.genericDescription)}'/>";
+<c:if test="${!productTerms.active}">
+	isSold=true;
+	<buyacar-el:seoUrl  value="${rangeCategory.URLPath}category.jhtml" var="ncsURL" delimeter="_" seoString="" excludeParamPrefix="excl_"  >
+	  <buyacar-el:param name="categoryId" value="${rangeCategory.id}" />
+	</buyacar-el:seoUrl>
+	var newcarURL = '<c:out value='${ncsURL}'/>';
+</c:if>
+
+var vatRate = <c:out value='${applicationScope.VAT}'/>;
+
+function continueToQuote(type){
+	switch(type){
+		case "compare":
+			document.getElementById('parkCarForm').action="mybuyacar/addItemToGarage" + ".jhtm" + "l"
+			document.getElementById('parkCarForm').submit();
+			break;
+		case "skip":
+			document.getElementById('parkCarForm').submit();
+			break;
+		default:
+			if( caprules.rsubmit() ){
+				document.getElementById('parkCarForm').submit();
+				}
+	}
+	return false;
+}
+
+window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('require', 'ec');
+
+ga('set', {
+    'dimension9': '${productData.manufacturerName}',
+    'dimension10': '${productData.rangeName}',
+    'dimension11': '${productData.bodyStyle}'
+    });
+    
+ga('ec:addProduct', {
+	  'id': 'bac-${productAdvert.id}',
+	  'name': '${productData.manufacturerName} ${whitespace} ${productData.rangeName} ${whitespace} ${productData.bodyStyle}',
+	  'category': '${productData.bodyStyle}',
+	  'brand': '${productData.manufacturerName}',
+	  'price': '${productTerms.price}',
+	  'variant': '${productTerms.vehicleFullName}'
+	});
+	ga('ec:setAction', 'detail');
+
+function sendGA(buttonName){	
+	if(window.location.host=="www.buyacar.co.uk"){
+		ga('ec:addProduct', {
+		  'id': 'bac-${productAdvert.id}',
+		  'name': '${productData.manufacturerName} ${whitespace} ${productData.rangeName} ${whitespace} ${productData.bodyStyle}',
+		  'category': '${productData.bodyStyle}',
+		  'brand': '${productData.manufacturerName}',
+		  'price': '${productTerms.price}',
+		  'quantity': '1',
+		  'variant': '${productTerms.vehicleFullName}'
+		});
+		
+		ga('ec:setAction', 'add');
+		
+		ga('send', 'event', 'Deal page', 'Pressed '+buttonName.text, window.location.href);
+	}
+}
+
+//]]></script>
+
+<div id="bacModal" class="bacModal">
+	<div id="signIn" class="overlay" data-action="initialClick"></div>
+	<div class="popup">
+		<div class="header">
+			<h4 id="bacModalTitle"></h4>
+			<a class="popup-close" href="#" data-action="initialClick">×</a>
+		</div>
+		<div id="bacModalText" class="bacModalText"></div>
+		<s:form id="bacModalForm" name="bacModalForm" namespace="/reserve" action="submitQuestion" theme="simple">
+			<s:hidden name="clientId" id="clientId" />
+			<s:hidden name="currentUserId" id="quoteFormCurrentUserId" value="${currentUser.id}"></s:hidden>
+			<s:hidden id="productAdvertId" name="productAdvertId" value="${productAdvertId}" />
+			<s:hidden id="deliveryMethodId" name="deliveryMethodId" value="${deliveryMethodId}" />
+			<s:hidden id="quoteItemId" name="quoteItemId" value="${quoteItemId}" />
+			<s:hidden id="quoteId" name="quoteId" value="${quoteId}" />
+				
+			<label> <s:textarea name="carReservationDTO.customerQuestion" placeholder="Ask your question..."></s:textarea>
+			</label>
+			<div class="bacModalDetailsContainer">
+				<div class="bacModalDetails">
+					<p id="bacModalUserText" class="bacModalUserText">
+						If you have an account <a href="#" data-action="bacModalSignIn">sign in</a>
+					</p>
+					<c:choose>
+						<c:when test="${not empty currentUser && not empty currentUser.firstName }">
+							<label>
+								First Name
+								<s:textfield name="carReservationDTO.firstName" placeholder="First Name" value="${currentUser.firstName}"/>
+							</label>
+						</c:when>
+						<c:otherwise>
+							<label>
+								First Name
+								<s:textfield name="carReservationDTO.firstName" placeholder="First Name" />
+							</label>
+						</c:otherwise>
+					</c:choose>
+					<c:choose>
+						<c:when test="${not empty currentUser && not empty currentUser.lastName }">
+							<label>
+								Last Name
+								<s:textfield name="carReservationDTO.lastName" placeholder="Last Name" value="${currentUser.lastName}"/>
+							</label>
+						</c:when>
+						<c:otherwise>
+							<label>
+								Last Name
+								<s:textfield name="carReservationDTO.lastName" placeholder="Last Name" />
+							</label>
+						</c:otherwise>
+					</c:choose>
+					<c:choose>
+						<c:when test="${not empty currentUser && not empty currentUser.telephoneNumber }">
+							<label>
+								Phone Number
+								<s:textfield type="tel" name="carReservationDTO.telephoneNumber" placeholder="Phone Number" value="${currentUser.telephoneNumber}"/>
+							</label>
+						</c:when>
+						<c:otherwise>
+							<label>
+								Phone Number
+								<s:textfield type="tel" name="carReservationDTO.telephoneNumber" placeholder="Phone Number" />
+							</label>
+						</c:otherwise>
+					</c:choose>
+					<c:choose>
+						<c:when test="${not empty currentUser && not empty currentUser.emailAddress }">
+							<label>
+								Email
+								<s:textfield type="email" name="carReservationDTO.emailAddress" placeholder="Email" value="${currentUser.emailAddress}"/>
+							</label>
+						</c:when>
+						<c:otherwise>
+							<label>
+								Email
+								<s:textfield type="email" name="carReservationDTO.emailAddress" placeholder="Email" />
+							</label>
+						</c:otherwise>
+					</c:choose>
+					<button type="submit">Submit</button>
+				</div>
+				<div class="bacModalDetails bacModalDetailsSignIn">
+					<p>
+						<a href="#" data-action="bacModalDetailsPanel">&lt; Back</a>
+					</p>
+					<label>
+						Email
+						<input type="email" name="signInEmail" placeholder="Email" />
+					</label>
+					<label>
+						Password
+						<input type="password" name="signInPassword" placeholder="Password" />
+					</label>
+
+					<button type="submit" data-action="bacModalSubmitSignIn" onclick="return false;">Submit</button>
+				</div>
+			</div>
+		</s:form>
+	</div>
+</div>
+
+<script>
+	(function() {
+		var host 			= (window.location.host.search('buyacar') === -1) ? 'www.buyacar.co.uk' : window.location.host;
+		var protocol 		= (window.location.host === 'www.buyacar.co.uk') ? 'https' : 'http';
+		var AUTHURL 		= protocol + '://' + host + '/login.do';
+		var POSTURL 		= protocol + '://' + host + '/reserve/submitQuestion.jhtml';
+
+
+		var transitionEnd 	= (document.body.style['transition']) ? 'transitionend' : 'webkitTransitionEnd';
+
+		var bacModal = {
+			modalOpened: 	false,
+			initialClick: function(e) {
+				clearTimeout(this.openTimer);
+
+				if (e && e.preventDefault) {
+					e.preventDefault();
+
+					var modalText 					= this.templates[e.target.dataset.action] || this.templates.delay;
+					this.$bacModalText.innerHTML 	= modalText;
+					this.$bacModalTitle.innerHTML 	= this.templates.title[e.target.dataset.action] || this.templates.title.delay;
+				} else {
+					this.$bacModalText.innerHTML 	= this.templates.delay;
+					this.$bacModalTitle.innerHTML 	= this.templates.title.delay;
+				}
+
+				var $confirmationScreen = this.$bacModalWrapper.querySelector('.bacModalConfirmation');
+				if ($confirmationScreen) {
+					$confirmationScreen.parentElement.removeChild($confirmationScreen);
+				}
+
+				var vector = (this.modalOpened === false) ? 'add' : 'remove';
+
+				this.modalOpened = (!this.modalOpened);
+
+				this.$bacModalWrapper.classList[vector]('open');
+
+				this[vector + 'Listeners']();
+			},
+			modalClick: function(e) {
+				var action = e.target.dataset.action;
+
+				if (e.target.dataset.action) {
+					var keys = Object.keys(this);
+
+					keys.forEach(function(key) {
+						if (key === action && typeof this[key] === 'function') {
+							this[key](e);
+						}
+					}.bind(this));
+				}
+			},
+			modalSubmit: function(e) {
+				console.log('modalSubmit', e);
+
+				var data = jQuery(this.$bacModalForm).serializeArray().filter(function(value) {
+					return (value.name !== 'signInEmail' && value.name !== 'signInPassword');
+				});
+
+				var errorArray = [];
+
+				data.forEach(function(value) {
+					if (value.value === '') { errorArray.push(value.name); }
+				});
+
+				if (errorArray.length > 0) {
+					this.dealWithErrors(errorArray);
+					return;
+				}
+
+				this.bacModalLoading();
+
+				$.get(POSTURL, data, function(response) {
+					this.bacModalFinishedLoading();
+					this.bacModalConfirmationScreen(data);
+				}.bind(this));
+			},
+			dealWithErrors: function(errors) {
+				console.log(errors);
+				errors.forEach(function(key) {
+					this.$bacModalForm.querySelector('[name="' + key + '"]').parentElement.classList.add('bacModalError');
+				}.bind(this));
+
+				this.addErrorListeners();
+			},
+			addErrorListeners: function() {
+				if (this.errorListener) { this.removeErrorListener(); }
+
+				this.errorListener = function(e) {
+					var $parent = e.target.parentElement;
+					if ($parent.classList.contains('bacModalError')) {
+						if (e.target.value.length > 0) {
+							$parent.classList.remove('bacModalError');
+						}
+					}
+				};
+
+				this.$bacModalForm.addEventListener('keyup', this.errorListener, false);
+			},
+			removeErrorListener: function() {
+				this.$bacModalForm.removeEventListener('keyup', this.errorListener, false);
+				this.errorListener = null;
+			},
+			bacModalSignIn: function(e) {
+				if (e) { e.preventDefault(); }
+				this.bacModalSignInPanel();
+			},
+			bacModalSignInPanel: function() {
+				this.$bacModalWrapper.classList.add('signInPanel');
+			},
+			bacModalDetailsPanel: function() {
+				this.$bacModalWrapper.classList.remove('signInPanel');
+			},
+			bacModalLoading: function() {
+				this.$bacModalWrapper.classList.add('bacModalLoading');
+			},
+			bacModalFinishedLoading: function() {
+				this.$bacModalWrapper.classList.remove('bacModalLoading');
+			},
+			bacModalSubmitSignIn: function(e) {
+				console.log('bacModalSubmitSignIn');
+
+				var details = jQuery(this.$bacModalForm).serializeArray().filter(function(value) {
+					return (value.name === 'signInEmail' || value.name === 'signInPassword');
+				});
+				details.map(function(value) {
+					value.name = value.name.replace('signIn', '').toLowerCase();
+					return value;
+				});
+
+				this.bacModalLoading();
+
+				this.getUserDetails(function(user) {
+					this.bacModalFinishedLoading();
+
+					user = JSON.parse(user.replace('userDetails(', '').replace(');',''));
+
+					if (user.error) {
+						alert('Invalid user');
+					} else {
+						this.bacModalSignInComplete(user.user);
+					}
+				}.bind(this), details);
+			},
+			bacModalConfirmationScreen: function(data) {
+				var name = data.filter(function(value) {
+					return (value.name === this.keyMappings.firstName);
+				}.bind(this));
+
+				this.$bacModalWrapper.querySelector('.popup').insertAdjacentHTML('afterbegin', this.templates.confirmation.replace('{{firstName}}', name[0].value));
+			},
+			getUserDetails: function(cb, details) {
+				$.post(AUTHURL, details, function(user) {
+					cb(user);
+				}.bind(this));
+			},
+			bacModalSignInComplete: function(user) {
+				Object.keys(user).forEach(function(key) {
+					var $input = this.$bacModalForm.querySelector('[name="' + this.keyMappings[key] + '"]');
+					if ($input) { $input.value = user[key]; }
+				}.bind(this));
+
+				this.$bacModalUserText.innerHTML = this.templates.signedIn;
+
+				var removeSignInPanel = function(e) {
+					this.$bacModalWrapper.removeEventListener(transitionEnd, removeSignInPanel);
+
+					var $signInPanel = this.$bacModalForm.querySelector('.bacModalDetailsSignIn');
+					$signInPanel.parentElement.removeChild($signInPanel);
+				}.bind(this);
+
+				this.$bacModalWrapper.addEventListener(transitionEnd, removeSignInPanel);
+
+				this.bacModalDetailsPanel();
+			},
+			checkIfLoggedIn: function() {
+			      var cookie = this.readCookie('BAC_SIGNIN');
+
+			      if (cookie) {
+			        this.sessionId = cookie;
+			      }
+
+			      return (typeof cookie === 'string');
+		    },
+		    readCookie: function(name) {
+		      var nameEQ = name + '=';
+		      var ca = document.cookie.split(';');
+		      for(var i=0;i < ca.length;i++) {
+		        var c = ca[i];
+		        while (c.charAt(0) ===' ') { c = c.substring(1,c.length); }
+		        if (c.indexOf(nameEQ) === 0) { return c.substring(nameEQ.length,c.length); }
+		      }
+		      return null;
+		    },
+			addListeners: function() {
+				this.clickListener = this.modalClick.bind(this);
+				this.$bacModalWrapper.addEventListener('click', this.clickListener, false);
+
+				this.submitListener = (function(e) {
+					e.preventDefault();
+					this.modalSubmit.bind(this, e)();
+					return false;
+				}).bind(this);
+				this.$bacModalForm.addEventListener('submit', this.submitListener, false);
+			},
+			removeListeners: function() {
+				this.$bacModalWrapper.removeEventListener('click', this.clickListener, false);
+				this.$bacModalForm.removeEventListener('submit', this.submitListener, false);
+			},
+			init: function() {
+				this.$bacModalWrapper 	= document.getElementById('bacModal');
+				this.$bacModalTitle 	= document.getElementById('bacModalTitle');
+				this.$bacModalForm 		= document.getElementById('bacModalForm');
+				this.$bacModalText 		= document.getElementById('bacModalText');
+				this.$bacModalUserText 	= document.getElementById('bacModalUserText');
+
+				this.$bacModalUserText.innerHTML = this.templates.notSignedIn;
+
+				var $buttonWrapper 		= document.getElementsByClassName('finance-pinklinks-wrapper')[0];
+				this.bacButtons 		= [].slice.call($buttonWrapper.getElementsByTagName('a'));
+
+				this.bacButtons.forEach(function(button) {
+					button.addEventListener('click', (this.initialClick).bind(this), false);
+				}.bind(this));
+
+				this.openTimer = setTimeout(function() {
+					this.initialClick();
+				}.bind(this), 30000);
+
+				/*
+				// NOT NEEDED
+				// Since there's no AJAX signin or BaC Java, the signin will be completed when the page loads
+				// If an AJAX signin is implented in future, then this can used.
+				var getSignInStatus = function() {
+					if (this.sessionId) {
+						$buttonWrapper.removeEventListener('mouseover', getSignInStatus, false);
+					}
+
+					if (this.checkIfLoggedIn()) {
+						this.getUserDetails(function(user) {
+							user = JSON.parse(user.replace('userDetails(', '').replace(');',''));
+							if (!user.error) {
+								this.bacModalSignInComplete(user.user);
+							}
+						}.bind(this));
+					}
+				}.bind(this);
+
+				$buttonWrapper.addEventListener('mouseover', getSignInStatus, false);
+				*/
+			},
+			templates: {
+				delay: 		'<p>Can we help? If you’ve got any questions about this car, or ordering with BuyaCar, then let us know in the box below.</p><p>Fill in your details below to register and we’ll get back to you in office hours</p>',
+				ask: 		'<p>Want to know more about this car, or how we’ll deliver it to your door? Ask us anything.</p><p>Fill in your details below to register and we’ll get back to you.</p>',
+				save: 		'<p>We’ll save this car so you can easily return to it. If you’ve got any questions about this model, or ordering with BuyaCar, then ask us in the box below.</p>',
+				exchange: 	'<p>Looking to part exchange your current car? Let us know the make, model, mileage and registration number to help us estimate its value. If you’ve got any questions, pop them below.</p><p>Fill in your details below to register and we’ll get back to you.</p>',
+				notSignedIn:'Already registered? <a href="#" data-action="bacModalSignIn">Click here to login</a>. If you’re not yet registered, then we’ll create a BuyaCar account where you can store the deals you’re interested in.',
+				signedIn: 	'Click below to submit.',
+				title: {
+					delay: 		'Can we help?',
+					ask: 		'Ask A Question',
+					save: 		'Save This Car',
+					exchange: 	'Part Exchange'
+				},
+				confirmation: '<div class="bacModalConfirmation"><div><p>Thanks {{firstName}}. We\'ll get back to you as soon as possible.</p><p><a href="#" data-action="initialClick">Click here to close</a></p></div></div>'
+			},
+			keyMappings: {
+				firstName: 	'carReservationDTO.firstName',
+				lastName: 	'carReservationDTO.lastName',
+				phone: 		'carReservationDTO.telephoneNumber',
+				email: 		'carReservationDTO.emailAddress'
+			}
+		};
+
+		if (document.readyState === 'interactive' || document.readyState === 'complete') {
+			bacModal.init();
+		} else {
+			document.addEventListener('DOMContentLoaded', function(event) {
+				bacModal.init();
+			});
+		}
+
+		window.bacModal = bacModal;
+
+	})();
+</script>
