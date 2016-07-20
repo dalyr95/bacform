@@ -129,20 +129,28 @@
 
 	<script>
 		(function() {
-			var AUTHURL 		= 'https://www.buyacar.co.uk/login.do';
-			var POSTURL 		= 'https://www.buyacar.co.uk/reserve/submitQuestion.jhtml';
+			var host 			= (window.location.host.search('buyacar') === -1) ? 'www.buyacar.co.uk' : window.location.host;
+			var protocol 		= (window.location.host === 'www.buyacar.co.uk') ? 'https' : 'http';
+			var AUTHURL 		= protocol + '://' + host + '/login.do';
+			var POSTURL 		= protocol + '://' + host + '/reserve/submitQuestion.jhtml';
+
 
 			var transitionEnd 	= (document.body.style['transition']) ? 'transitionend' : 'webkitTransitionEnd';
 
 			var bacModal = {
 				modalOpened: false, 
 				initialClick: function(e) {
+					clearTimeout(this.openTimer);
+
 					if (e && e.preventDefault) {
 						e.preventDefault();
 
 						var modalText 					= this.templates[e.target.dataset.action] || this.templates.delay;
 						this.$bacModalText.innerHTML 	= modalText;
 						this.$bacModalTitle.innerHTML 	= this.templates.title[e.target.dataset.action] || this.templates.title.delay;
+					} else {
+						this.$bacModalText.innerHTML 	= this.templates.delay;
+						this.$bacModalTitle.innerHTML 	= this.templates.title.delay;
 					}
 
 					var $confirmationScreen = this.$bacModalWrapper.querySelector('.bacModalConfirmation');
@@ -307,6 +315,10 @@
 					this.bacButtons.forEach(function(button) {
 						button.addEventListener('click', (this.initialClick).bind(this), false);
 					}.bind(this));
+
+					this.openTimer = setTimeout(function() {
+						this.initialClick();
+					}.bind(this), 30000);
 
 					/*
 					// NOT NEEDED

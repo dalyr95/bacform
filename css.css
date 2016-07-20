@@ -178,6 +178,7 @@
 .bacModal .popup .bacModalConfirmation {
 	background-color: #fff;
 	height: calc(100% - 30px);
+	left: 0;
 	padding: 40px;
 	position: absolute;
 	text-align: center;
