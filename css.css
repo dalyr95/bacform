@@ -170,7 +170,8 @@
 }
 
 .bacModalText,
-.bacModalText p {
+.bacModalText p,
+.bacModalUserText {
 	font-size: 14px;
 	line-height: 1.4em;
 }
@@ -191,5 +192,10 @@
 	position: absolute;
 	top: 50%;
 	transform: translate(-50%, -50%);
+}
+
+.bacModal .popup .bacModalError input,
+.bacModal .popup .bacModalError textarea {
+	border-color: red;
 }
 

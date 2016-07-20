@@ -75,6 +75,11 @@
 			top: 50%;
 			transform: translate(-50%, -50%);
 		}
+
+		.bacModal .popup .bacModalError input,
+		.bacModal .popup .bacModalError textarea {
+			border-color: red;
+		}
 	</style>
 </head>
 
@@ -95,17 +100,21 @@
 				</label>
 				<div class="bacModalDetailsContainer">
 					<div class="bacModalDetails">
-						<p id="bacModalUserText">If you have an account <a href="#" data-action="bacModalSignIn">sign in</a></p>
+						<p id="bacModalUserText" class="bacModalUserText">If you have an account <a href="#" data-action="bacModalSignIn">sign in</a></p>
 						<label>
+							First Name
 							<input type="text" name="carReservationDTO.firstName" placeholder="First Name" />
 						</label>
 						<label>
+							Last Name
 							<input type="text" name="carReservationDTO.lastName" placeholder="Last Name" />
 						</label>
 						<label>
+							Phone Number
 							<input type="tel" name="carReservationDTO.telephoneNumber" placeholder="Phone Number" />
 						</label>
 						<label>
+							Email
 							<input type="email" name="carReservationDTO.emailAddress" placeholder="Email" />
 						</label>
 
@@ -114,9 +123,11 @@
 					<div class="bacModalDetails bacModalDetailsSignIn">
 						<p><a href="#" data-action="bacModalDetailsPanel">&lt; Back</a></p>
 						<label>
+							Email
 							<input type="email" name="signInEmail" placeholder="Email" />
 						</label>
 						<label>
+							Password
 							<input type="password" name="signInPassword" placeholder="Password" />
 						</label>
 
@@ -138,7 +149,7 @@
 			var transitionEnd 	= (document.body.style['transition']) ? 'transitionend' : 'webkitTransitionEnd';
 
 			var bacModal = {
-				modalOpened: false, 
+				modalOpened: 	false,
 				initialClick: function(e) {
 					clearTimeout(this.openTimer);
 
@@ -186,12 +197,48 @@
 						return (value.name !== 'signInEmail' && value.name !== 'signInPassword');
 					});
 
+					var errorArray = [];
+
+					data.forEach(function(value) {
+						if (value.value === '') { errorArray.push(value.name); }
+					});
+
+					if (errorArray.length > 0) {
+						this.dealWithErrors(errorArray);
+						return;
+					}
+
 					this.bacModalLoading();
 
 					$.get(POSTURL, data, function(response) {
 						this.bacModalFinishedLoading();
 						this.bacModalConfirmationScreen(data);
 					}.bind(this));
+				},
+				dealWithErrors: function(errors) {
+					errors.forEach(function(key) {
+						this.$bacModalForm.querySelector('[name="' + key + '"]').parentElement.classList.add('bacModalError');
+					}.bind(this));
+
+					this.addErrorListeners();
+				},
+				addErrorListeners: function() {
+					if (this.errorListener) { this.removeErrorListener(); }
+
+					this.errorListener = function(e) {
+						var $parent = e.target.parentElement;
+						if ($parent.classList.contains('bacModalError')) {
+							if (e.target.value.length > 0) {
+								$parent.classList.remove('bacModalError');
+							}
+						}
+					};
+
+					this.$bacModalForm.addEventListener('keyup', this.errorListener, false);
+				},
+				removeErrorListener: function() {
+					this.$bacModalForm.removeEventListener('keyup', this.errorListener, false);
+					this.errorListener = null;
 				},
 				bacModalSignIn: function(e) {
 					if (e) { e.preventDefault(); }
@@ -267,7 +314,6 @@
 				},
 				checkIfLoggedIn: function() {
 				      var cookie = this.readCookie('BAC_SIGNIN');
-				      console.log('checkIfLoggedIn', cookie);
 
 				      if (cookie) {
 				        this.sessionId = cookie;
