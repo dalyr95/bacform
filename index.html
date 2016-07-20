@@ -216,6 +216,7 @@
 					}.bind(this));
 				},
 				dealWithErrors: function(errors) {
+					console.log(errors);
 					errors.forEach(function(key) {
 						this.$bacModalForm.querySelector('[name="' + key + '"]').parentElement.classList.add('bacModalError');
 					}.bind(this));

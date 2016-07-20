@@ -120,6 +120,7 @@
 .bacModal .bacModalDetails label {
 	display: block;
 	margin-bottom: 10px;
+	overflow: hidden;
 }
 
 .bacModal .popup input,
@@ -131,6 +132,10 @@
     height: 35px;
     line-height: 30px;
     -webkit-appearance: none;
+}
+
+.bacModal .popup input {
+    width: calc(100% - 25%);
 }
 
 .bacModal .popup textarea {
