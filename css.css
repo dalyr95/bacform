@@ -60,7 +60,6 @@
 
 .bacModal.bacModalLoading .popup::before {
 	background-color: rgba(255,255,255,0.5);
-	background-image: url('http://www.ajaxload.info/cache/FF/FF/FF/00/00/00/30-0.gif');
 	background-repeat: no-repeat;
 	background-position: 50% calc(50% + 80px - 32px);
 	content: '';
@@ -174,5 +173,22 @@
 .bacModalText p {
 	font-size: 14px;
 	line-height: 1.4em;
+}
+
+.bacModal .popup .bacModalConfirmation {
+	background-color: #fff;
+	height: calc(100% - 30px);
+	padding: 40px;
+	position: absolute;
+	text-align: center;
+	top: 30px;
+	width: 100%;
+}
+
+.bacModal .popup .bacModalConfirmation div {
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
 }
 

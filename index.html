@@ -58,6 +58,23 @@
 			float: left;
 			width: 50%;
 		}
+
+		.bacModal .popup .bacModalConfirmation {
+			background-color: #fff;
+			height: calc(100% - 30px);
+			padding: 40px;
+			position: absolute;
+			text-align: center;
+			top: 30px;
+			width: 100%;
+		}
+
+		.bacModal .popup .bacModalConfirmation div {
+			left: 50%;
+			position: absolute;
+			top: 50%;
+			transform: translate(-50%, -50%);
+		}
 	</style>
 </head>
 
@@ -70,26 +87,26 @@
 	<div id="bacModal" class="bacModal">
 		<div id="signIn" class="overlay" data-action="initialClick"></div>
 		<div class="popup">
-			<div class="header"><h4>A title</h4><a class="popup-close" href="#" data-action="initialClick">×</a></div>
+			<div class="header"><h4 id="bacModalTitle"></h4><a class="popup-close" href="#" data-action="initialClick">×</a></div>
 			<div id="bacModalText" class="bacModalText"></div>
 			<form id="bacModalForm">
 				<label>
-					<textarea name="question" placeholder="Ask your question..."></textarea>
+					<textarea name="carReservationDTO.customerQuestion" placeholder="Ask your question..."></textarea>
 				</label>
 				<div class="bacModalDetailsContainer">
 					<div class="bacModalDetails">
 						<p id="bacModalUserText">If you have an account <a href="#" data-action="bacModalSignIn">sign in</a></p>
 						<label>
-							<input type="text" name="firstName" placeholder="First Name" />
+							<input type="text" name="carReservationDTO.firstName" placeholder="First Name" />
 						</label>
 						<label>
-							<input type="text" name="lastName" placeholder="Last Name" />
+							<input type="text" name="carReservationDTO.lastName" placeholder="Last Name" />
 						</label>
 						<label>
-							<input type="tel" name="phone" placeholder="Phone Number" />
+							<input type="tel" name="carReservationDTO.telephoneNumber" placeholder="Phone Number" />
 						</label>
 						<label>
-							<input type="email" name="email" placeholder="Email" />
+							<input type="email" name="carReservationDTO.emailAddress" placeholder="Email" />
 						</label>
 
 						<button type="submit">Submit</button>
@@ -112,8 +129,8 @@
 
 	<script>
 		(function() {
-			var AUTHURL 		= 'http://www.buyacar.co.uk/login.do';
-			var POSTURL 		= 'http://jsonplaceholder.typicode.com/posts/1';
+			var AUTHURL 		= 'https://www.buyacar.co.uk/login.do';
+			var POSTURL 		= 'https://www.buyacar.co.uk/reserve/submitQuestion.jhtml';
 
 			var transitionEnd 	= (document.body.style['transition']) ? 'transitionend' : 'webkitTransitionEnd';
 
@@ -123,8 +140,14 @@
 					if (e && e.preventDefault) {
 						e.preventDefault();
 
-						var modalText = this.templates[e.target.dataset.action] || this.templates.delay;
-						this.$bacModalText.innerHTML = modalText;
+						var modalText 					= this.templates[e.target.dataset.action] || this.templates.delay;
+						this.$bacModalText.innerHTML 	= modalText;
+						this.$bacModalTitle.innerHTML 	= this.templates.title[e.target.dataset.action] || this.templates.title.delay;
+					}
+
+					var $confirmationScreen = this.$bacModalWrapper.querySelector('.bacModalConfirmation');
+					if ($confirmationScreen) {
+						$confirmationScreen.parentElement.removeChild($confirmationScreen);
 					}
 
 					var vector = (this.modalOpened === false) ? 'add' : 'remove';
@@ -157,15 +180,10 @@
 
 					this.bacModalLoading();
 
-					// TODO - Change this to post when endpoint exists
 					$.get(POSTURL, data, function(response) {
-						console.log(response);
 						this.bacModalFinishedLoading();
-						alert('Done!');
-						this.initialClick();
+						this.bacModalConfirmationScreen(data);
 					}.bind(this));
-
-					console.log(data);
 				},
 				bacModalSignIn: function(e) {
 					if (e) { e.preventDefault(); }
@@ -208,6 +226,13 @@
 						}
 					}.bind(this), details);
 				},
+				bacModalConfirmationScreen: function(data) {
+					var name = data.filter(function(value) {
+						return (value.name === this.keyMappings.firstName);
+					}.bind(this));
+
+					this.$bacModalWrapper.querySelector('.popup').insertAdjacentHTML('afterbegin', this.templates.confirmation.replace('{{firstName}}', name[0].value));
+				},
 				getUserDetails: function(cb, details) {
 					$.post(AUTHURL, details, function(user) {
 						cb(user);
@@ -215,7 +240,7 @@
 				},
 				bacModalSignInComplete: function(user) {
 					Object.keys(user).forEach(function(key) {
-						var $input = this.$bacModalForm.querySelector('[name="' + key + '"]');
+						var $input = this.$bacModalForm.querySelector('[name="' + this.keyMappings[key] + '"]');
 						if ($input) { $input.value = user[key]; }
 					}.bind(this));
 
@@ -269,6 +294,7 @@
 				},
 				init: function() {
 					this.$bacModalWrapper 	= document.getElementById('bacModal');
+					this.$bacModalTitle 	= document.getElementById('bacModalTitle');
 					this.$bacModalForm 		= document.getElementById('bacModalForm');
 					this.$bacModalText 		= document.getElementById('bacModalText');
 					this.$bacModalUserText 	= document.getElementById('bacModalUserText');
@@ -310,7 +336,20 @@
 					save: 		'<p>We’ll save this car so you can easily return to it. If you’ve got any questions about this model, or ordering with BuyaCar, then ask us in the box below.</p>',
 					exchange: 	'<p>Looking to part exchange your current car? Let us know the make, model, mileage and registration number to help us estimate its value. If you’ve got any questions, pop them below.</p><p>Fill in your details below to register and we’ll get back to you.</p>',
 					notSignedIn:'Already registered? <a href="#" data-action="bacModalSignIn">Click here to login</a>. If you’re not yet registered, then we’ll create a BuyaCar account where you can store the deals you’re interested in.',
-					signedIn: 	'Click below to submit.'
+					signedIn: 	'Click below to submit.',
+					title: {
+						delay: 		'Can we help?',
+						ask: 		'Ask A Question',
+						save: 		'Save This Car',
+						exchange: 	'Part Exchange'
+					},
+					confirmation: '<div class="bacModalConfirmation"><div><p>Thanks {{firstName}}. We\'ll get back to you as soon as possible.</p><p><a href="#" data-action="initialClick">Click here to close</a></p></div></div>'
+				},
+				keyMappings: {
+					firstName: 	'carReservationDTO.firstName',
+					lastName: 	'carReservationDTO.lastName',
+					phone: 		'carReservationDTO.telephoneNumber',
+					email: 		'carReservationDTO.emailAddress'
 				}
 			};
 
