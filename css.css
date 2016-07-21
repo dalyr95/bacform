@@ -131,15 +131,18 @@
     border: 2px solid #ccc;
     height: 35px;
     line-height: 30px;
+    outline: none;
     -webkit-appearance: none;
 }
 
 .bacModal .popup input {
+	float: right;
     width: calc(100% - 25%);
 }
 
 .bacModal .popup textarea {
-    height: 10em;
+	font-size: 16px;
+    height: 8em;
 	padding-top: 0;
 	padding-bottom: 0;
 	width: 100%;
@@ -202,5 +205,12 @@
 .bacModal .popup .bacModalError input,
 .bacModal .popup .bacModalError textarea {
 	border-color: red;
+}
+
+.bacModal .popup .bacModalDetailsBack {
+    position: absolute;
+    margin: 0;
+    line-height: 50px;
+    display: block;
 }
 

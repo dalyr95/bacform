@@ -1156,7 +1156,7 @@ function sendGA(buttonName){
 					<button type="submit">Submit</button>
 				</div>
 				<div class="bacModalDetails bacModalDetailsSignIn">
-					<p>
+					<p class="bacModalDetailsBack">
 						<a href="#" data-action="bacModalDetailsPanel">&lt; Back</a>
 					</p>
 					<label>
@@ -1265,7 +1265,7 @@ function sendGA(buttonName){
 
 				this.errorListener = function(e) {
 					var $parent = e.target.parentElement;
-					if ($parent.classList.contains('bacModalError')) {
+					if (e.target.type !== 'hidden' && $parent.classList.contains('bacModalError')) {
 						if (e.target.value.length > 0) {
 							$parent.classList.remove('bacModalError');
 						}

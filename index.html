@@ -121,7 +121,7 @@
 						<button type="submit">Submit</button>
 					</div>
 					<div class="bacModalDetails bacModalDetailsSignIn">
-						<p><a href="#" data-action="bacModalDetailsPanel">&lt; Back</a></p>
+						<p class="bacModalDetailsBack"><a href="#" data-action="bacModalDetailsPanel">&lt; Back</a></p>
 						<label>
 							Email
 							<input type="email" name="signInEmail" placeholder="Email" />
@@ -228,7 +228,7 @@
 
 					this.errorListener = function(e) {
 						var $parent = e.target.parentElement;
-						if ($parent.classList.contains('bacModalError')) {
+						if (e.target.type !== 'hidden' && $parent.classList.contains('bacModalError')) {
 							if (e.target.value.length > 0) {
 								$parent.classList.remove('bacModalError');
 							}
