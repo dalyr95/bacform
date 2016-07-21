@@ -95,6 +95,7 @@
 			<div class="header"><h4 id="bacModalTitle"></h4><a class="popup-close" href="#" data-action="initialClick">×</a></div>
 			<div id="bacModalText" class="bacModalText"></div>
 			<form id="bacModalForm">
+<input type="hidden" name="clientId" value="" id="clientId"><input type="hidden" name="currentUserId" value="" id="quoteFormCurrentUserId"><input type="hidden" name="productAdvertId" value="544351" id="productAdvertId">
 				<label>
 					<textarea name="carReservationDTO.customerQuestion" placeholder="Ask your question..."></textarea>
 				</label>
@@ -193,15 +194,19 @@
 				modalSubmit: function(e) {
 					console.log('modalSubmit', e);
 
-					var data = jQuery(this.$bacModalForm).serializeArray().filter(function(value) {
+					var $inputs = [].slice.call(this.$bacModalForm.querySelectorAll('input, textarea'));
+
+					var data = $inputs.filter(function(value) {
 						return (value.name !== 'signInEmail' && value.name !== 'signInPassword');
 					});
 
-					var errorArray = [];
 
-					data.forEach(function(value) {
-						if (value.value === '') { errorArray.push(value.name); }
+					var errorArray = $inputs.filter(function(input) {
+						console.log(input.type, (input.type !== 'hidden' && input.name !== 'signInEmail' && input.name !== 'signInPassword'));
+						return (input.type !== 'hidden' && input.name !== 'signInEmail' && input.name !== 'signInPassword' && input.value === '');
 					});
+
+					console.log('errorArray', errorArray);
 
 					if (errorArray.length > 0) {
 						this.dealWithErrors(errorArray);
@@ -215,10 +220,9 @@
 						this.bacModalConfirmationScreen(data);
 					}.bind(this));
 				},
-				dealWithErrors: function(errors) {
-					console.log(errors);
-					errors.forEach(function(key) {
-						this.$bacModalForm.querySelector('[name="' + key + '"]').parentElement.classList.add('bacModalError');
+				dealWithErrors: function($errors) {
+					$errors.forEach(function($input) {
+						$input.parentElement.classList.add('bacModalError');
 					}.bind(this));
 
 					this.addErrorListeners();

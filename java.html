@@ -1230,15 +1230,19 @@ function sendGA(buttonName){
 			modalSubmit: function(e) {
 				console.log('modalSubmit', e);
 
-				var data = jQuery(this.$bacModalForm).serializeArray().filter(function(value) {
+				var $inputs = [].slice.call(this.$bacModalForm.querySelectorAll('input, textarea'));
+
+				var data = $inputs.filter(function(value) {
 					return (value.name !== 'signInEmail' && value.name !== 'signInPassword');
 				});
 
-				var errorArray = [];
 
-				data.forEach(function(value) {
-					if (value.value === '') { errorArray.push(value.name); }
+				var errorArray = $inputs.filter(function(input) {
+					console.log(input.type, (input.type !== 'hidden' && input.name !== 'signInEmail' && input.name !== 'signInPassword'));
+					return (input.type !== 'hidden' && input.name !== 'signInEmail' && input.name !== 'signInPassword' && input.value === '');
 				});
+
+				console.log('errorArray', errorArray);
 
 				if (errorArray.length > 0) {
 					this.dealWithErrors(errorArray);
@@ -1252,10 +1256,9 @@ function sendGA(buttonName){
 					this.bacModalConfirmationScreen(data);
 				}.bind(this));
 			},
-			dealWithErrors: function(errors) {
-				console.log(errors);
-				errors.forEach(function(key) {
-					this.$bacModalForm.querySelector('[name="' + key + '"]').parentElement.classList.add('bacModalError');
+			dealWithErrors: function($errors) {
+				$errors.forEach(function($input) {
+					$input.parentElement.classList.add('bacModalError');
 				}.bind(this));
 
 				this.addErrorListeners();

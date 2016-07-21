@@ -18,7 +18,7 @@
     background: rgba(0,0,0,0.7);
     transition: opacity 0.2s;
     opacity: 1;
-    z-index: 100;
+    z-index: 201;
     width: 100vw;
     height: 100vh;
     -webkit-animation-duration: 0.2s;
@@ -114,6 +114,7 @@
 .bacModal .bacModalDetailsContainer .bacModalDetails {
 	float: left;
 	padding-right: 20px;
+	position: relative;
 	width: 50%;
 }
 
@@ -208,9 +209,10 @@
 }
 
 .bacModal .popup .bacModalDetailsBack {
-    position: absolute;
-    margin: 0;
-    line-height: 50px;
+	bottom: 0;
     display: block;
+    line-height: 50px;
+    margin: 0;
+    position: absolute;
 }
 
