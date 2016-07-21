@@ -121,8 +121,20 @@
 
 .bacModal .bacModalDetails label {
 	display: block;
+	float: left;
+	font-size: 14px;
+	line-height: 35px;
 	margin-bottom: 10px;
 	overflow: hidden;
+	width: 50%;
+}
+
+.bacModal .bacModalDetails label:nth-child(even) {
+	padding-right: 10px;
+}
+
+.bacModal .bacModalDetails label:nth-child(odd) {
+	padding-left: 10px;
 }
 
 .bacModal .popup input,
@@ -139,17 +151,18 @@
 
 .bacModal .popup input {
 	float: right;
-    width: calc(100% - 140px);
+    width: calc(100% - 110px);
 }
 
 .bacModal .popup textarea {
-	font-size: 16px;
+	font-size: 14px;
     height: 8em;
 	padding-top: 0;
 	padding-bottom: 0;
 	width: 100%;
 }
 
+.bacModal .popup button.back,
 .bacModal .popup button[type="submit"] {
 	font-weight: normal;
     background: #F50057;
@@ -161,7 +174,7 @@
     font-size: 20px;
     line-height: 1;
     margin-top: 20px;
-    margin: 0 auto;
+    margin: 30px auto 0; 
     padding: 15px 8px 15px;
     text-align: center;
     text-decoration: none;
@@ -173,6 +186,15 @@
 
 .bacModal .popup button[type="submit"]:hover {
     background: #FF0F66;
+}
+
+.bacModal .popup button.back {
+    background: #555555;
+    width: 80px;
+}
+
+.bacModal .popup button.back:hover {
+    background: #000;
 }
 
 .bacModalText {

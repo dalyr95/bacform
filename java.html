@@ -1101,13 +1101,13 @@ function sendGA(buttonName){
 						<c:when test="${not empty currentUser && not empty currentUser.firstName }">
 							<label>
 								First Name
-								<s:textfield name="carReservationDTO.firstName" placeholder="First Name" value="${currentUser.firstName}"/>
+								<s:textfield name="carReservationDTO.firstName" value="${currentUser.firstName}"/>
 							</label>
 						</c:when>
 						<c:otherwise>
 							<label>
 								First Name
-								<s:textfield name="carReservationDTO.firstName" placeholder="First Name" />
+								<s:textfield name="carReservationDTO.firstName" />
 							</label>
 						</c:otherwise>
 					</c:choose>
@@ -1115,13 +1115,13 @@ function sendGA(buttonName){
 						<c:when test="${not empty currentUser && not empty currentUser.lastName }">
 							<label>
 								Last Name
-								<s:textfield name="carReservationDTO.lastName" placeholder="Last Name" value="${currentUser.lastName}"/>
+								<s:textfield name="carReservationDTO.lastName" value="${currentUser.lastName}"/>
 							</label>
 						</c:when>
 						<c:otherwise>
 							<label>
 								Last Name
-								<s:textfield name="carReservationDTO.lastName" placeholder="Last Name" />
+								<s:textfield name="carReservationDTO.lastName" />
 							</label>
 						</c:otherwise>
 					</c:choose>
@@ -1129,13 +1129,13 @@ function sendGA(buttonName){
 						<c:when test="${not empty currentUser && not empty currentUser.telephoneNumber }">
 							<label>
 								Phone Number
-								<s:textfield type="tel" name="carReservationDTO.telephoneNumber" placeholder="Phone Number" value="${currentUser.telephoneNumber}"/>
+								<s:textfield type="tel" name="carReservationDTO.telephoneNumber" value="${currentUser.telephoneNumber}"/>
 							</label>
 						</c:when>
 						<c:otherwise>
 							<label>
 								Phone Number
-								<s:textfield type="tel" name="carReservationDTO.telephoneNumber" placeholder="Phone Number" />
+								<s:textfield type="tel" name="carReservationDTO.telephoneNumber" />
 							</label>
 						</c:otherwise>
 					</c:choose>
@@ -1143,31 +1143,32 @@ function sendGA(buttonName){
 						<c:when test="${not empty currentUser && not empty currentUser.emailAddress }">
 							<label>
 								Email
-								<s:textfield type="email" name="carReservationDTO.emailAddress" placeholder="Email" value="${currentUser.emailAddress}"/>
+								<s:textfield type="email" name="carReservationDTO.emailAddress" value="${currentUser.emailAddress}"/>
 							</label>
 						</c:when>
 						<c:otherwise>
 							<label>
 								Email
-								<s:textfield type="email" name="carReservationDTO.emailAddress" placeholder="Email" />
+								<s:textfield type="email" name="carReservationDTO.emailAddress" />
 							</label>
 						</c:otherwise>
 					</c:choose>
+					<p style="clear:both"></p>
 					<button type="submit">Submit</button>
 				</div>
 				<div class="bacModalDetails bacModalDetailsSignIn">
 					<p class="bacModalDetailsBack">
-						<a href="#" data-action="bacModalDetailsPanel">&lt; Back</a>
+						<button href="#" class="back" data-action="bacModalDetailsPanel">Back</button>
 					</p>
 					<label>
 						Email
-						<input type="email" name="signInEmail" placeholder="Email" />
+						<input type="email" name="signInEmail" />
 					</label>
 					<label>
 						Password
-						<input type="password" name="signInPassword" placeholder="Password" />
+						<input type="password" name="signInPassword" />
 					</label>
-
+					<p style="clear:both"></p>
 					<button type="submit" data-action="bacModalSubmitSignIn" onclick="return false;">Submit</button>
 				</div>
 			</div>
