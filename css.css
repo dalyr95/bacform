@@ -19,8 +19,8 @@
     transition: opacity 0.2s;
     opacity: 1;
     z-index: 201;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     -webkit-animation-duration: 0.2s;
     -webkit-animation-name: popupAnimation;
     animation-duration: 0.2s;
@@ -43,6 +43,7 @@
     max-height: 100vh;
     overflow-y: auto;
     max-width: 860px;
+    min-width: 360px;
     padding: 40px 20px 20px 20px;
     position: fixed;
     overflow-x: hidden;
@@ -138,7 +139,7 @@
 
 .bacModal .popup input {
 	float: right;
-    width: calc(100% - 25%);
+    width: calc(100% - 140px);
 }
 
 .bacModal .popup textarea {
