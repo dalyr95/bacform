@@ -50,7 +50,7 @@
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
     width: 50%;
-    z-index: 101;
+    z-index: 202;
     -webkit-overflow-scrolling: touch;
     -webkit-animation-duration: 0.2s;
     -webkit-animation-name: popupAnimation;
@@ -194,6 +194,7 @@
 	text-align: center;
 	top: 30px;
 	width: 100%;
+	z-index: 1;
 }
 
 .bacModal .popup .bacModalConfirmation div {
