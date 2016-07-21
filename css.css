@@ -123,7 +123,7 @@
 	display: block;
 	float: left;
 	font-size: 14px;
-	line-height: 35px;
+	line-height: 22px;
 	margin-bottom: 10px;
 	overflow: hidden;
 	width: 50%;
@@ -150,8 +150,8 @@
 }
 
 .bacModal .popup input {
-	float: right;
-    width: calc(100% - 110px);
+	display: block;
+	width: 100%;
 }
 
 .bacModal .popup textarea {
@@ -189,8 +189,15 @@
 }
 
 .bacModal .popup button.back {
-    background: #555555;
-    width: 80px;
+	background: #555555;
+    width: 60px;
+    height: 25px;
+    line-height: 25px;
+    padding: 0;
+    border-radius: 5px;
+    font-size: 14px;
+    position: relative;
+    top: -10px;
 }
 
 .bacModal .popup button.back:hover {

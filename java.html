@@ -1299,7 +1299,8 @@ function sendGA(buttonName){
 				this.$bacModalWrapper.classList.remove('bacModalLoading');
 			},
 			bacModalSubmitSignIn: function(e) {
-				console.log('bacModalSubmitSignIn');
+				e.preventDefault();
+				e.stopPropagation();
 
 				var details = jQuery(this.$bacModalForm).serializeArray().filter(function(value) {
 					return (value.name === 'signInEmail' || value.name === 'signInPassword');
