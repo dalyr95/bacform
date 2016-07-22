@@ -1194,10 +1194,14 @@ function sendGA(buttonName){
 				if (e && e.preventDefault) {
 					e.preventDefault();
 
+					this.action = e.target.dataset.action;
+
 					var modalText 					= this.templates[e.target.dataset.action] || this.templates.delay;
 					this.$bacModalText.innerHTML 	= modalText;
 					this.$bacModalTitle.innerHTML 	= this.templates.title[e.target.dataset.action] || this.templates.title.delay;
 				} else {
+					this.action = 'delay';
+
 					this.$bacModalText.innerHTML 	= this.templates.delay;
 					this.$bacModalTitle.innerHTML 	= this.templates.title.delay;
 				}
@@ -1239,11 +1243,8 @@ function sendGA(buttonName){
 
 
 				var errorArray = $inputs.filter(function(input) {
-					console.log(input.type, (input.type !== 'hidden' && input.name !== 'signInEmail' && input.name !== 'signInPassword'));
-					return (input.type !== 'hidden' && input.name !== 'signInEmail' && input.name !== 'signInPassword' && input.value === '');
+					return (input.type !== 'hidden' && input.type !== 'textarea' && input.name !== 'signInEmail' && input.name !== 'signInPassword' && input.value === '');
 				});
-
-				console.log('errorArray', errorArray);
 
 				if (errorArray.length > 0) {
 					this.dealWithErrors(errorArray);
@@ -1329,7 +1330,7 @@ function sendGA(buttonName){
 					return (value.name === this.keyMappings.firstName);
 				}.bind(this));
 
-				this.$bacModalWrapper.querySelector('.popup').insertAdjacentHTML('afterbegin', this.templates.confirmation.replace('{{firstName}}', name[0].value));
+				this.$bacModalWrapper.querySelector('.popup').insertAdjacentHTML('afterbegin', this.templates.confirmation[this.action]);
 			},
 			getUserDetails: function(cb, details) {
 				$.post(AUTHURL, details, function(user) {
@@ -1409,6 +1410,10 @@ function sendGA(buttonName){
 					this.initialClick();
 				}.bind(this), 30000);
 
+				// Force input types as Java doesn't support them
+				document.querySelector('input[name="' + this.keyMappings.phone + '"]').type = 'tel';
+				document.querySelector('input[name="' + this.keyMappings.email + '"]').type = 'email';
+
 				/*
 				// NOT NEEDED
 				// Since there's no AJAX signin or BaC Java, the signin will be completed when the page loads
@@ -1444,7 +1449,12 @@ function sendGA(buttonName){
 					save: 		'Save This Car',
 					exchange: 	'Part Exchange'
 				},
-				confirmation: '<div class="bacModalConfirmation"><div><p>Thanks {{firstName}}. We\'ll get back to you as soon as possible.</p><p><a href="#" data-action="initialClick">Click here to close</a></p></div></div>'
+				confirmation: {
+					delay: 		'<div class="bacModalConfirmation"><div><p>Thank you! We’ll get back to you ASAP.</p><p>In the meantime, why not browse our latest cars?</p><p><a href="http://www.buyacar.co.uk/cars/used_car.jhtml" class="button">Browse Cars</a></p></div></div>',
+					ask: 		'<div class="bacModalConfirmation"><div><p>Thank you!</p><p>Your question has been submitted, we’ll get back to you with a reply ASAP.</p><p>In the meantime, why not browse our latest cars?</p><p><a href="http://www.buyacar.co.uk/cars/used_car.jhtml" class="button">Browse Cars</a></p></div></div>',
+					save: 		'<div class="bacModalConfirmation"><div><p>Your car is now saved.</p><p>You can view your saved cars in <a href="http://www.buyacar.co.uk/mybuyacar/summary.jhtml">My Account</a></p><p>In the meantime, why not browse our latest cars?</p><p><a href="http://www.buyacar.co.uk/cars/used_car.jhtml" class="button">Browse Cars</a></p></div></div>',
+					exchange: 	'<div class="bacModalConfirmation"><div><p>Thank you! We’ll get back to you ASAP.</p><p>In the meantime, why not browse our latest cars?</p><p><a href="http://www.buyacar.co.uk/cars/used_car.jhtml" class="button">Browse Cars</a></p></div></div>',
+				}
 			},
 			keyMappings: {
 				firstName: 	'carReservationDTO.firstName',

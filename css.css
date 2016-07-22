@@ -162,6 +162,7 @@
 	width: 100%;
 }
 
+.bacModal .popup .button,
 .bacModal .popup button.back,
 .bacModal .popup button[type="submit"] {
 	font-weight: normal;
