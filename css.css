@@ -124,8 +124,8 @@
 	float: left;
 	font-size: 14px;
 	line-height: 22px;
-	margin-bottom: 10px;
-	overflow: hidden;
+	margin-bottom: 16px;
+	position: relative;
 	width: 50%;
 }
 
@@ -233,6 +233,14 @@
 	position: absolute;
 	top: 50%;
 	transform: translate(-50%, -50%);
+}
+
+.bacModal .popup .bacModalError::after {
+	bottom: -20px;
+	color: red;
+	content: 'Please enter a value';
+	font-size: 12px;
+	position: absolute;
 }
 
 .bacModal .popup .bacModalError input,
