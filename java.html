@@ -1219,6 +1219,29 @@ function sendGA(buttonName){
 				this.$bacModalWrapper.classList[vector]('open');
 
 				this[vector + 'Listeners']();
+
+				if (typeof ga === 'function') {
+					var event = '/virtual/';
+
+					switch(this.action) {
+					    case 'ask': // Friday
+							event += 'ask-a-question-modal'
+					        break;
+					    case 'save': // Friday
+							event += 'save-this-car-modal'
+					        break;
+					    case 'exchange': // Friday
+							event += 'part-exchange-modal'
+					        break;
+					    case 'delay': // Friday
+							event += 'delay-modal'
+					        break;
+					}
+
+					this.gaEvent = '/virtual/' + event;
+
+					ga('send', 'pageview', this.gaEvent);
+				}
 			},
 			modalClick: function(e) {
 				var action = e.target.dataset.action;
@@ -1332,6 +1355,10 @@ function sendGA(buttonName){
 				}.bind(this));
 
 				this.$bacModalWrapper.querySelector('.popup').insertAdjacentHTML('afterbegin', this.templates.confirmation[this.action]);
+
+				if (this.gaEvent) {
+					ga('send', 'pageview', this.gaEvent + '?completedAction=quotesaved_newlySaved');
+				}
 			},
 			bacModalSignInError: function() {
 				var $bacSignInForm = document.querySelector('.bacModalDetailsSignIn');
