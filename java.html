@@ -488,7 +488,7 @@
 					<div class="finance-pinklinks-wrapper">
 						<div class="finance-pinklinks" style="text-align:left"><a href="#" onclick="sendGA(this);" data-action="ask">Ask a question</a></div>
 						<div class="finance-pinklinks"><a href="#" onclick="sendGA(this);" data-action="save">Save this car</a></div>
-						<div class="finance-pinklinks" style="text-align:right"><a href="#" onclick="sendGA(this);" data-action="exchange">Part exchange</a></div>
+						<div class="finance-pinklinks" style="text-align:right"><a href="/mybuyacar/startCapCarSelector.jhtml" onclick="sendGA(this);">Part exchange</a></div>
 					</div>
 
 					<c:if test="${productTerms.prodTermsGroup.financeQuoteValidWithoutChecks}">
@@ -1169,7 +1169,7 @@ function sendGA(buttonName){
 						<input type="password" name="signInPassword" />
 					</label>
 					<p style="clear:both"></p>
-					<a href="/forgottenPassword.jhtml">Forgotten password?</a>
+					<a href="/forgottenPassword.jhtml" class="bacModalForgotPW">Forgotten password?</a>
 					<button type="submit" data-action="bacModalSubmitSignIn" onclick="return false;">Submit</button>
 				</div>
 			</div>
@@ -1210,6 +1210,10 @@ function sendGA(buttonName){
 				var $confirmationScreen = this.$bacModalWrapper.querySelector('.bacModalConfirmation');
 				if ($confirmationScreen) {
 					$confirmationScreen.parentElement.removeChild($confirmationScreen);
+				}
+
+				if (this.$bacModalForm.querySelector('input[name="currentUserId"]').value.length > 0) {
+					this.$bacModalUserText.innerHTML = this.templates.signedIn;
 				}
 
 				var vector = (this.modalOpened === false) ? 'add' : 'remove';

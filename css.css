@@ -265,3 +265,7 @@
     margin-bottom: 10px;
     text-align: center;
 }
+
+.bacModal .popup .bacModalForgotPW {
+	font-size: 14px;
+}
