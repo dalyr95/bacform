@@ -1406,9 +1406,51 @@ function sendGA(buttonName){
 					button.addEventListener('click', (this.initialClick).bind(this), false);
 				}.bind(this));
 
-				this.openTimer = setTimeout(function() {
-					this.initialClick();
-				}.bind(this), 30000);
+				var autoShow 	= false;
+				var date 		= new Date();
+				var day 		= date.getDay();
+
+				if (day === 0) { // Sunday
+					autoShow = true;
+				} else {
+					var hour;
+
+					if (typeof Intl === 'object') {
+						var options = {
+							timeZone: 'Europe/London',
+							hour: 'numeric',
+							hour12: false
+						};
+						var formatter = new Intl.DateTimeFormat([], options);
+						hour = parseInt(formatter.format(new Date()));
+					} else {
+						hour = date.getUTCHours();
+					}
+
+					switch(day) {
+					    case 5: // Friday
+					    	if (hour < 9 || hour > 17) {
+					    		autoShow = true;
+					    	}
+					        break;
+					    case 6: // Saturday
+					    	if (hour < 9 || hour > 16) {
+					    		autoShow = true;
+					    	}
+					        break;
+					    default:
+					    	if (hour < 9 || hour > 19) {
+					    		autoShow = true;
+					    	}
+					        
+					}
+				}
+
+				if (autoShow === true) {
+					this.openTimer = setTimeout(function() {
+						this.initialClick();
+					}.bind(this), 30000);
+				}
 
 				// Force input types as Java doesn't support them
 				document.querySelector('input[name="' + this.keyMappings.phone + '"]').type = 'tel';
