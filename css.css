@@ -259,6 +259,7 @@
 .bacModal .popup .bacModalSignInError::before {
     border-bottom: 1px solid #ccc;
     color: red;
+    content: 'Your email address or password is incorrect';
     display: block;
     line-height: 30px;
     margin-bottom: 10px;
