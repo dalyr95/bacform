@@ -1320,7 +1320,7 @@ function sendGA(buttonName){
 					user = JSON.parse(user.replace('userDetails(', '').replace(');',''));
 
 					if (user.error) {
-						alert('Invalid user');
+						this.bacModalSignInError();
 					} else {
 						this.bacModalSignInComplete(user.user);
 					}
@@ -1332,6 +1332,19 @@ function sendGA(buttonName){
 				}.bind(this));
 
 				this.$bacModalWrapper.querySelector('.popup').insertAdjacentHTML('afterbegin', this.templates.confirmation[this.action]);
+			},
+			bacModalSignInError: function() {
+				var $bacSignInForm = document.querySelector('.bacModalDetailsSignIn');
+
+				var errorListener = function() {
+					console.log('keyup!');
+					$bacSignInForm.classList.remove('bacModalSignInError');
+					$bacSignInForm.removeEventListener('keyup', errorListener, false);
+				}
+
+				$bacSignInForm.addEventListener('keyup', errorListener, false);
+
+				$bacSignInForm.classList.add('bacModalSignInError');
 			},
 			getUserDetails: function(cb, details) {
 				$.post(AUTHURL, details, function(user) {
@@ -1493,10 +1506,10 @@ function sendGA(buttonName){
 					exchange: 	'Part Exchange'
 				},
 				confirmation: {
-					delay: 		'<div class="bacModalConfirmation"><div><p>Thank you! We’ll get back to you ASAP.</p><p>In the meantime, why not browse our latest cars?</p><p><a href="http://www.buyacar.co.uk/cars/used_car.jhtml" class="button">Browse Cars</a></p></div></div>',
-					ask: 		'<div class="bacModalConfirmation"><div><p>Thank you!</p><p>Your question has been submitted, we’ll get back to you with a reply ASAP.</p><p>In the meantime, why not browse our latest cars?</p><p><a href="http://www.buyacar.co.uk/cars/used_car.jhtml" class="button">Browse Cars</a></p></div></div>',
-					save: 		'<div class="bacModalConfirmation"><div><p>Your car is now saved.</p><p>You can view your saved cars in <a href="http://www.buyacar.co.uk/mybuyacar/summary.jhtml">My Account</a></p><p>In the meantime, why not browse our latest cars?</p><p><a href="http://www.buyacar.co.uk/cars/used_car.jhtml" class="button">Browse Cars</a></p></div></div>',
-					exchange: 	'<div class="bacModalConfirmation"><div><p>Thank you! We’ll get back to you ASAP.</p><p>In the meantime, why not browse our latest cars?</p><p><a href="http://www.buyacar.co.uk/cars/used_car.jhtml" class="button">Browse Cars</a></p></div></div>',
+					delay: 		'<div class="bacModalConfirmation"><div><p>Thank you! We’ll get back to you ASAP.</p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
+					ask: 		'<div class="bacModalConfirmation"><div><p>Thank you!</p><p>Your question has been submitted, we’ll get back to you with a reply ASAP.</p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
+					save: 		'<div class="bacModalConfirmation"><div><p>Your car is now saved.</p><p>You can view your saved cars in <a href="http://www.buyacar.co.uk/mybuyacar/summary.jhtml">My Account</a></p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
+					exchange: 	'<div class="bacModalConfirmation"><div><p>Thank you! We’ll get back to you ASAP.</p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
 				}
 			},
 			keyMappings: {
