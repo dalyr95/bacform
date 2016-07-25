@@ -1193,9 +1193,13 @@ function sendGA(buttonName){
 				clearTimeout(this.openTimer);
 
 				if (e && e.preventDefault) {
-					e.preventDefault();
-
 					this.action = e.target.dataset.action;
+
+					if (this.action) {
+						e.preventDefault();
+					} else {
+						return true;
+					}
 
 					var modalText 					= this.templates[e.target.dataset.action] || this.templates.delay;
 					this.$bacModalText.innerHTML 	= modalText;

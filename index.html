@@ -87,7 +87,7 @@
 	<div class="finance-pinklinks-wrapper">
 		<a href="#" data-action="ask">Ask a question</a>
 		<a href="#" data-action="save">Save This Car</a>
-		<a href="#" data-action="exchange">Part Exchange</a>
+		<a href="#">Part Exchange</a>
 	</div>
 	<div id="bacModal" class="bacModal">
 		<div id="signIn" class="overlay" data-action="initialClick"></div>
@@ -158,9 +158,13 @@
 					clearTimeout(this.openTimer);
 
 					if (e && e.preventDefault) {
-						e.preventDefault();
-
 						this.action = e.target.dataset.action;
+
+						if (this.action) {
+							e.preventDefault();
+						} else {
+							return true;
+						}
 
 						var modalText 					= this.templates[e.target.dataset.action] || this.templates.delay;
 						this.$bacModalText.innerHTML 	= modalText;
