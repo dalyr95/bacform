@@ -1455,6 +1455,7 @@ function sendGA(buttonName){
 			removeListeners: function() {
 				this.$bacModalWrapper.removeEventListener('click', this.clickListener, false);
 				this.$bacModalForm.removeEventListener('submit', this.submitListener, false);
+				this.$bacModalForm.querySelector('input[name="' + this.keyMappings.email + '"]').removeEventListener('blur', this.emailListener, false);
 			},
 			init: function() {
 				this.$bacModalWrapper 	= document.getElementById('bacModal');
