@@ -1181,8 +1181,8 @@ function sendGA(buttonName){
 		var host 			= (window.location.host.search('buyacar') === -1) ? 'www.buyacar.co.uk' : window.location.host;
 		var protocol 		= (window.location.host === 'www.buyacar.co.uk') ? 'https' : 'http';
 		var AUTHURL 		= protocol + '://' + host + '/login.do';
-		var POSTURL 		= protocol + '://' + host + '/reserve/submitQuestion.jhtml';
-		var EMAILURL 		= protocol + '://' + host + '/AJAXisEmailPresent.jhtml?emailAddress=';
+		var POSTURL 		= 'http' + '://' + host + '/reserve/submitQuestion.jhtml';
+		var EMAILURL 		= 'http' + '://' + host + '/AJAXisEmailPresent.jhtml?emailAddress=';
 
 
 		var transitionEnd 	= (document.body.style['transition']) ? 'transitionend' : 'webkitTransitionEnd';
