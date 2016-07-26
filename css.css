@@ -261,8 +261,10 @@
     color: red;
     content: 'Your email address or password is incorrect';
     display: block;
-    line-height: 30px;
+    font-size: 14px;
+    line-height: normal;
     margin-bottom: 10px;
+    padding-bottom: 0.5em;
     text-align: center;
 }
 
@@ -270,8 +272,10 @@
     border-bottom: 1px solid #ccc;
     content: 'It looks like you already have a BuyACar account, please enter your password to sign in';
     display: block;
-    line-height: 30px;
+    font-size: 14px;
+    line-height: normal;
     margin-bottom: 10px;
+    padding-bottom: 0.5em;
     text-align: center;
 }
 
