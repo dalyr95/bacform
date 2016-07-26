@@ -142,6 +142,7 @@
 		</div>
 	</div>
 
+	
 	<script>
 		(function() {
 			var host 			= (window.location.host.search('buyacar') === -1) ? 'www.buyacar.co.uk' : window.location.host;
@@ -208,7 +209,7 @@
 								event += 'part-exchange-modal'
 						        break;
 						    case 'delay': // Friday
-								event += 'delay-modal'
+								event += 'can-we-help-modal'
 						        break;
 						}
 
@@ -286,6 +287,8 @@
 
 					if (forceSignIn === true) {
 						document.querySelector('.bacModalDetailsSignIn').classList.add('bacModalSignInForce');
+						var value = this.$bacModalForm.querySelector('input[name="' + this.keyMappings.email + '"]').value;
+						this.$bacModalForm.querySelector('input[name="signInEmail"]').value = value;
 					}
 					this.bacModalSignInPanel();
 				},
@@ -411,7 +414,7 @@
 						$.post(EMAILURL + e.target.value, function(data) {
 							console.log('data', data);
 							if (data === true) {
-								this.bacModalSignIn();	
+								this.bacModalSignIn(null, true);	
 							}
 						}.bind(this));
 					}).bind(this);
