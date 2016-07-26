@@ -111,12 +111,12 @@
 							<input type="text" name="carReservationDTO.lastName" placeholder="Last Name" />
 						</label>
 						<label>
-							Phone Number
-							<input type="tel" name="carReservationDTO.telephoneNumber" placeholder="Phone Number" />
-						</label>
-						<label>
 							Email
 							<input type="email" name="carReservationDTO.emailAddress" placeholder="Email" />
+						</label>
+						<label>
+							Phone Number
+							<input type="tel" name="carReservationDTO.telephoneNumber" placeholder="Phone Number" />
 						</label>
 
 						<button type="submit">Submit</button>
@@ -148,6 +148,7 @@
 			var protocol 		= (window.location.host === 'www.buyacar.co.uk') ? 'https' : 'http';
 			var AUTHURL 		= protocol + '://' + host + '/login.do';
 			var POSTURL 		= protocol + '://' + host + '/reserve/submitQuestion.jhtml';
+			var EMAILURL 		= protocol + '://' + host + '/AJAXisEmailPresent.jhtml?emailAddress=';
 
 
 			var transitionEnd 	= (document.body.style['transition']) ? 'transitionend' : 'webkitTransitionEnd';
@@ -211,7 +212,7 @@
 						        break;
 						}
 
-						this.gaEvent = '/virtual' + event;
+						this.gaEvent = event;
 
 						ga('send', 'pageview', this.gaEvent);
 					}
@@ -399,6 +400,18 @@
 						return false;
 					}).bind(this);
 					this.$bacModalForm.addEventListener('submit', this.submitListener, false);
+
+					console.log(this.$bacModalForm.querySelector('input[name="' + this.keyMappings.email + '"]'));
+					this.emailListener = (function(e) {
+						console.warn('email blur', e.target.value);
+						$.post(EMAILURL + e.target.value, function(data) {
+							console.log('data', data);
+							if (data === 'true') {
+								this.bacModalSignIn();	
+							}
+						});
+					}).bind(this);
+					this.$bacModalForm.querySelector('input[name="' + this.keyMappings.email + '"]').addEventListener('blur', this.emailListener, false);
 				},
 				removeListeners: function() {
 					this.$bacModalWrapper.removeEventListener('click', this.clickListener, false);
