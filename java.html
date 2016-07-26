@@ -1176,7 +1176,6 @@ function sendGA(buttonName){
 		</s:form>
 	</div>
 </div>
-
 <script>
 	(function() {
 		var host 			= (window.location.host.search('buyacar') === -1) ? 'www.buyacar.co.uk' : window.location.host;
@@ -1190,6 +1189,7 @@ function sendGA(buttonName){
 
 		var bacModal = {
 			modalOpened: 	false,
+			emailAlreadyExists: false,
 			initialClick: function(e) {
 				clearTimeout(this.openTimer);
 
@@ -1267,6 +1267,11 @@ function sendGA(buttonName){
 			},
 			modalSubmit: function(e) {
 				console.log('modalSubmit', e);
+
+				if (this.emailAlreadyExists === true) {
+					this.bacModalSignIn(null, true);
+					return;
+				}
 
 				var $inputs = [].slice.call(this.$bacModalForm.querySelectorAll('input, textarea'));
 
@@ -1448,6 +1453,8 @@ function sendGA(buttonName){
 				this.emailListener = (function(e) {
 					if ($emailInput.value.length > 0) {
 						$.post(EMAILURL + e.target.value, function(data) {
+							this.emailAlreadyExists = data;
+
 							if (data === true) {
 								this.bacModalSignIn(null, true);	
 							}
