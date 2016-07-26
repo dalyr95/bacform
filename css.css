@@ -257,7 +257,6 @@
 }
 
 .bacModal .popup .bacModalSignInError::before {
-    border-bottom: 1px solid #ccc;
     color: red;
     content: 'Your email address or password is incorrect';
     display: block;
@@ -269,8 +268,8 @@
 }
 
 .bacModal .popup .bacModalSignInForce::before {
-    border-bottom: 1px solid #ccc;
-    content: 'It looks like you already have a BuyACar account, please enter your password to sign in';
+    content: 'It looks like you already have a BuyACar account, please enter your password to sign in.';
+    color: red;
     display: block;
     font-size: 14px;
     line-height: normal;
