@@ -1316,8 +1316,12 @@ function sendGA(buttonName){
 				this.$bacModalForm.removeEventListener('keyup', this.errorListener, false);
 				this.errorListener = null;
 			},
-			bacModalSignIn: function(e) {
+			bacModalSignIn: function(e, forceSignIn) {
 				if (e) { e.preventDefault(); }
+
+				if (forceSignIn === true) {
+					document.querySelector('.bacModalDetailsSignIn').classList.add('bacModalSignInForce');
+				}
 				this.bacModalSignInPanel();
 			},
 			bacModalSignInPanel: function() {
@@ -1441,7 +1445,7 @@ function sendGA(buttonName){
 					console.warn('email blur', e.target.value);
 					$.post(EMAILURL + e.target.value, function(data) {
 						console.log('data', data);
-						if (data === 'true') {
+						if (data === true) {
 							this.bacModalSignIn();	
 						}
 					});

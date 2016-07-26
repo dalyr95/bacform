@@ -266,6 +266,15 @@
     text-align: center;
 }
 
+.bacModal .popup .bacModalSignInForce::before {
+    border-bottom: 1px solid #ccc;
+    content: 'It looks like you already have a BuyACar account, please enter your password to sign in';
+    display: block;
+    line-height: 30px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
 .bacModal .popup .bacModalForgotPW {
 	font-size: 14px;
 }
