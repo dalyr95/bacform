@@ -80,6 +80,15 @@
 		.bacModal .popup .bacModalError textarea {
 			border-color: red;
 		}
+
+		.bacModal .popup .bacModalError::after {
+			bottom: -20px;
+			color: red;
+			content: 'Please enter your ' attr(data-value);
+			font-size: 12px;
+			position: absolute;
+		}
+
 	</style>
 </head>
 
@@ -102,19 +111,19 @@
 				<div class="bacModalDetailsContainer">
 					<div class="bacModalDetails">
 						<p id="bacModalUserText" class="bacModalUserText">If you have an account <a href="#" data-action="bacModalSignIn">sign in</a></p>
-						<label>
+						<label data-value="first name">
 							First Name
 							<input type="text" name="carReservationDTO.firstName" placeholder="First Name" />
 						</label>
-						<label>
+						<label data-value="last name">
 							Last Name
 							<input type="text" name="carReservationDTO.lastName" placeholder="Last Name" />
 						</label>
-						<label>
+						<label data-value="email">
 							Email
 							<input type="email" name="carReservationDTO.emailAddress" placeholder="Email" />
 						</label>
-						<label>
+						<label data-value="phone number">
 							Phone Number
 							<input type="tel" name="carReservationDTO.telephoneNumber" placeholder="Phone Number" />
 						</label>
@@ -125,11 +134,11 @@
 						<p class="bacModalDetailsBack">
 							<button href="#" class="back" data-action="bacModalDetailsPanel" onclick="return false;">Back</button>
 						</p>
-						<label>
+						<label data-value="email">
 							Email
 							<input type="email" name="signInEmail" />
 						</label>
-						<label>
+						<label data-value="password">
 							Password
 							<input type="password" name="signInPassword" />
 						</label>

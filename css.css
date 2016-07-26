@@ -85,10 +85,12 @@
 	text-align: left;
 	top: 0;
 	width: 100%;
+    text-transform: none;
 }
 
 .bacModal .popup .header h4 {
 	font-size: 20px;
+	text-transform: none;
 }
 
 .bacModal .popup .popup-close {
@@ -238,7 +240,7 @@
 .bacModal .popup .bacModalError::after {
 	bottom: -20px;
 	color: red;
-	content: 'Please enter a value';
+	content: 'Please enter your ' attr(data-value);
 	font-size: 12px;
 	position: absolute;
 }
