@@ -1387,6 +1387,7 @@ function sendGA(buttonName){
 				$bacSignInForm.addEventListener('keyup', errorListener, false);
 
 				$bacSignInForm.classList.add('bacModalSignInError');
+				$bacSignInForm.classList.remove('bacModalSignInForce');
 			},
 			getUserDetails: function(cb, details) {
 				$.post(AUTHURL, details, function(user) {
@@ -1442,15 +1443,19 @@ function sendGA(buttonName){
 				}).bind(this);
 				this.$bacModalForm.addEventListener('submit', this.submitListener, false);
 
-				console.log(this.$bacModalForm.querySelector('input[name="' + this.keyMappings.email + '"]'));
+				var $emailInput = this.$bacModalForm.querySelector('input[name="' + this.keyMappings.email + '"]');
+
 				this.emailListener = (function(e) {
-					$.post(EMAILURL + e.target.value, function(data) {
-						if (data === true) {
-							this.bacModalSignIn(null, true);	
-						}
-					}.bind(this));
+					if ($emailInput.value.length > 0) {
+						$.post(EMAILURL + e.target.value, function(data) {
+							if (data === true) {
+								this.bacModalSignIn(null, true);	
+							}
+						}.bind(this));
+					}
 				}).bind(this);
-				this.$bacModalForm.querySelector('input[name="' + this.keyMappings.email + '"]').addEventListener('blur', this.emailListener, false);
+
+				$emailInput.addEventListener('blur', this.emailListener, false);
 			},
 			removeListeners: function() {
 				this.$bacModalWrapper.removeEventListener('click', this.clickListener, false);
