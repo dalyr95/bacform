@@ -413,7 +413,7 @@
 							if (data === true) {
 								this.bacModalSignIn();	
 							}
-						});
+						}.bind(this));
 					}).bind(this);
 					this.$bacModalForm.querySelector('input[name="' + this.keyMappings.email + '"]').addEventListener('blur', this.emailListener, false);
 				},
