@@ -488,7 +488,7 @@
 					<div class="finance-pinklinks-wrapper">
 						<div class="finance-pinklinks" style="text-align:left"><a href="#" onclick="sendGA(this);" data-action="ask">Ask a question</a></div>
 						<div class="finance-pinklinks"><a href="#" onclick="sendGA(this);" data-action="save">Save this car</a></div>
-						<div class="finance-pinklinks" style="text-align:right"><a href="/mybuyacar/startCapCarSelector.jhtml" onclick="sendGA(this);">Part exchange</a></div>
+						<div class="finance-pinklinks" style="text-align:right"><a href="#" onclick="sendGA(this);document.getElementById('parkCarForm').submit();">Part exchange</a></div>
 					</div>
 
 					<c:if test="${productTerms.prodTermsGroup.financeQuoteValidWithoutChecks}">
@@ -1559,11 +1559,11 @@ function sendGA(buttonName){
 				*/
 			},
 			templates: {
-				delay: 		'<p>If you’ve got any questions about this car, or ordering with BuyaCar, then let us know in the box below.</p><p>Fill in your details below to register and we’ll get back to you in office hours.</p>',
-				ask: 		'<p>Want to know more about this car, or how we’ll deliver it to your door? Ask us anything.</p><p>Fill in your details below to register and we’ll get back to you.</p>',
-				save: 		'<p>We’ll save this car so you can easily return to it. If you’ve got any questions about this model, or ordering with BuyaCar, then ask us in the box below.</p>',
-				exchange: 	'<p>Looking to part exchange your current car? Let us know the make, model, mileage and registration number to help us estimate its value. If you’ve got any questions, pop them below.</p><p>Fill in your details below to register and we’ll get back to you.</p>',
-				notSignedIn:'Already registered? <a href="#" data-action="bacModalSignIn" tabindex="-1">Click here to login</a>. If you’re not yet registered, then we’ll create a BuyaCar account where you can store the deals you’re interested in.',
+				delay: 		'<p>If you\'ve got any questions about this car, or ordering with BuyaCar, then let us know in the box below.</p><p>Fill in your details below to register and we\'ll get back to you in office hours.</p>',
+				ask: 		'<p>Want to know more about this car, or how we\'ll deliver it to your door? Ask us anything.</p><p>Fill in your details below to register and we\'ll get back to you.</p>',
+				save: 		'<p>We\'ll save this car so you can easily return to it. If you\'ve got any questions about this model, or ordering with BuyaCar, then ask us in the box below.</p>',
+				exchange: 	'<p>Looking to part exchange your current car? Let us know the make, model, mileage and registration number to help us estimate its value. If you\'ve got any questions, pop them below.</p><p>Fill in your details below to register and we\'ll get back to you.</p>',
+				notSignedIn:'Already registered? <a href="#" data-action="bacModalSignIn" tabindex="-1">Click here to login</a>. If you\'re not yet registered, then we\'ll create a BuyaCar account where you can store the deals you\'re interested in.',
 				signedIn: 	'Click below to submit.',
 				title: {
 					delay: 		'Can we help?',
@@ -1572,10 +1572,10 @@ function sendGA(buttonName){
 					exchange: 	'Part exchange'
 				},
 				confirmation: {
-					delay: 		'<div class="bacModalConfirmation"><div><p>Thank you! We’ll get back to you ASAP.</p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
-					ask: 		'<div class="bacModalConfirmation"><div><p>Thank you!</p><p>Your question has been submitted, we’ll get back to you with a reply ASAP.</p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
+					delay: 		'<div class="bacModalConfirmation"><div><p>Thank you! We\'ll get back to you ASAP.</p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
+					ask: 		'<div class="bacModalConfirmation"><div><p>Thank you!</p><p>Your question has been submitted, we\'ll get back to you with a reply ASAP.</p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
 					save: 		'<div class="bacModalConfirmation"><div><p>Your car is now saved.</p><p>You can view your saved cars in <a href="http://www.buyacar.co.uk/mybuyacar/summary.jhtml">My Account</a></p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
-					exchange: 	'<div class="bacModalConfirmation"><div><p>Thank you! We’ll get back to you ASAP.</p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
+					exchange: 	'<div class="bacModalConfirmation"><div><p>Thank you! We\'ll get back to you ASAP.</p><p>In the meantime, why not <a href="http://www.buyacar.co.uk/cars/used_car.jhtml">browse our latest cars?</a></p><p><a href="#" class="button" data-action="initialClick">Close</a></p></div></div>',
 				}
 			},
 			keyMappings: {
