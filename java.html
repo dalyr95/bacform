@@ -1405,6 +1405,7 @@ function sendGA(buttonName){
 					if ($input) { $input.value = user[key]; }
 				}.bind(this));
 
+				this.emailAlreadyExists = 'signedIn';
 				this.$bacModalUserText.innerHTML = this.templates.signedIn;
 
 				var removeSignInPanel = function(e) {
@@ -1453,7 +1454,7 @@ function sendGA(buttonName){
 				this.emailListener = (function(e) {
 					if ($emailInput.value.length > 0) {
 						$.post(EMAILURL + e.target.value, function(data) {
-							this.emailAlreadyExists = data;
+							if (this.emailAlreadyExists !== 'signedIn') { this.emailAlreadyExists = data; }
 
 							if (data === true) {
 								this.bacModalSignIn(null, true);	
