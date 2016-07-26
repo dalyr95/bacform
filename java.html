@@ -1444,9 +1444,7 @@ function sendGA(buttonName){
 
 				console.log(this.$bacModalForm.querySelector('input[name="' + this.keyMappings.email + '"]'));
 				this.emailListener = (function(e) {
-					console.warn('email blur', e.target.value);
 					$.post(EMAILURL + e.target.value, function(data) {
-						console.log('data', data);
 						if (data === true) {
 							this.bacModalSignIn(null, true);	
 						}
