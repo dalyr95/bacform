@@ -1179,10 +1179,11 @@ function sendGA(buttonName){
 <script>
 	(function() {
 		var host 			= (window.location.host.search('buyacar') === -1) ? 'www.buyacar.co.uk' : window.location.host;
-		var protocol 		= (window.location.host === 'www.buyacar.co.uk') ? 'https' : 'http';
+		//var protocol 		= (window.location.host === 'www.buyacar.co.uk') ? 'https' : 'http';
+		var protocol 		= 'http';
 		var AUTHURL 		= protocol + '://' + host + '/login.do';
-		var POSTURL 		= 'http' + '://' + host + '/reserve/submitQuestion.jhtml';
-		var EMAILURL 		= 'http' + '://' + host + '/AJAXisEmailPresent.jhtml?emailAddress=';
+		var POSTURL 		= protocol + '://' + host + '/reserve/submitQuestion.jhtml';
+		var EMAILURL 		= protocol + '://' + host + '/AJAXisEmailPresent.jhtml?emailAddress=';
 
 
 		var transitionEnd 	= (document.body.style['transition']) ? 'transitionend' : 'webkitTransitionEnd';
@@ -1229,7 +1230,7 @@ function sendGA(buttonName){
 
 				this[vector + 'Listeners']();
 
-				if (typeof ga === 'function') {
+				if (typeof ga === 'function' && this.modalOpened === true) {
 					var event = '/virtual/';
 
 					switch(this.action) {
