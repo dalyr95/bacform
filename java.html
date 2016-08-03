@@ -1411,6 +1411,8 @@ function sendGA(buttonName){
 				this.$bacModalWrapper.addEventListener(transitionEnd, removeSignInPanel);
 
 				this.bacModalDetailsPanel();
+
+				ga('set', 'userId', user.id); // Set the user ID using signed-in user_id.
 			},
 			checkIfLoggedIn: function() {
 			      var cookie = this.readCookie('BAC_SIGNIN');
