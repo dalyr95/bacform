@@ -675,47 +675,6 @@
 										test="${not empty conditionReport.nextServiceConstant or adminAction}">
 										Date of when the next service is due: <c:out value="${conditionReport.nextServiceConstant}" />;
 									</c:if>
-									<c:if
-										test="${not empty conditionReport.generalConditionCode or adminAction}">
-										The general condition of the vehicle: <c:out
-													value="${conditionReport.generalConditionConstant}" />;
-									</c:if>
-									<c:if
-										test="${not empty conditionReport.accidentsConstant or adminAction}">
-										Has the vehicle been involved in any accidents: <c:out value="${conditionReport.accidentsConstant}" />;
-									</c:if>
-									<c:if
-										test="${not empty conditionReport.mileageCorrectConstant or adminAction}">
-										Is the mileage correct for the vehicle since new: <c:out
-													value="${conditionReport.mileageCorrectConstant}" />;
-									</c:if>
-									<c:if
-										test="${not empty conditionReport.numberOfKeys or adminAction}">
-										Number of Keys: <c:out value="${conditionReport.numberOfKeys}" />;
-									</c:if>
-									<c:if
-										test="${not empty conditionReport.encumbrance or adminAction}">
-										Balance of finance agreement or other encumbrance: <c:out value="${conditionReport.encumbrance}" />;
-									</c:if>
-									<c:if
-										test="${not empty conditionReport.serviceHistoryCode or adminAction}">
-										Service history documentation: <c:out
-													value="${conditionReport.serviceHistoryConstant}" />;
-									</c:if>
-									<c:if
-										test="${not empty conditionReport.documentsPresentConstant or adminAction}">
-										Vehicle documentation: <c:out
-													value="${conditionReport.documentsPresentConstant}" />;
-									</c:if>
-									<c:if
-										test="${not empty conditionReport.numberOfOwnersConstant or adminAction}">
-										Number of previous owners: <c:out
-													value="${conditionReport.numberOfOwnersConstant}" />;
-									</c:if>
-									<c:if
-										test="${not empty conditionReport.usagePurposeCode or adminAction}">
-										Purpose the vehicle been used for: <c:out value="${conditionReport.usagePurposeConstant}" />;
-									</c:if>
 								</p>
 							</dd>
 						</div>
@@ -763,8 +722,6 @@
 										<div class="condition-right"><c:out value="${conditionReport.carpetsConstant}" /></div>
 										<div class="condition-left">stereo / navigation / etc</div>
 										<div class="condition-right"><c:out value="${conditionReport.stereoConstant}" /></div>
-										<div class="condition-left">air conditioning</div>
-										<div class="condition-right"><c:out value="${conditionReport.airConConstant}" /></div>
 									</div>
 								</div>
 							</dd>
